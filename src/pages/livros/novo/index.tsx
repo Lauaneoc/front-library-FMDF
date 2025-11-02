@@ -28,10 +28,6 @@ const serieOptions = [
 
 export default function NovoLivroPage() {
   return (
-    <div className="flex h-screen bg-background">
-      <AppSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AppHeader />
 
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-4xl mx-auto space-y-6">
@@ -100,7 +96,6 @@ export default function NovoLivroPage() {
             </Card>
           </div>
         </main>
-      </div>
-    </div>
+      
   )
 }

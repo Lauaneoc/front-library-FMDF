@@ -1,7 +1,5 @@
 import { Save, User, Settings, Shield } from "lucide-react"
-import { AppSidebar } from "../../components/app-sidebar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
-import { AppHeader } from "../../components/app-header"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { FormField } from "../../components/form-field"
 import { Separator } from "../../components/ui/separator"
@@ -9,11 +7,7 @@ import { Button } from "../../components/ui/button"
 
 export default function ConfiguracoesPage() {
   return (
-    <div className="flex h-screen bg-background">
-      <AppSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AppHeader title="Configurações" />
-
+    <>
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-4xl mx-auto space-y-6">
             <div>
@@ -244,7 +238,6 @@ export default function ConfiguracoesPage() {
             </Tabs>
           </div>
         </main>
-      </div>
-    </div>
+    </>
   )
 }

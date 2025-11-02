@@ -1,13 +1,11 @@
 import { Plus, Edit, Eye, Trash2 } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "../../components/ui/button"
-import { AppSidebar } from "../../components/app-sidebar"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { FiltersDrawer } from "../../components/filters-drawer"
 import { TableSimple } from "../../components/table-simple"
 import { EstadoBadge } from "../../components/estado-badge"
 import { Badge } from "../../components/ui/badge"
-import { AppHeader } from "../../components/app-header"
 
 // Mock data
 const mockCopies = [
@@ -112,11 +110,7 @@ export default function ExemplaresPage() {
   )
 
   return (
-    <div className="flex h-screen bg-background">
-      <AppSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AppHeader title="Exemplares" />
-
+    <>
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
@@ -166,7 +160,6 @@ export default function ExemplaresPage() {
             </Card>
           </div>
         </main>
-      </div>
-    </div>
+    </>
   )
 }

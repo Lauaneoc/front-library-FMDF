@@ -9,8 +9,6 @@ import { FiltersDrawer } from "../../components/filters-drawer"
 import { TableSimple } from "../../components/table-simple"
 import { StatusBadge } from "../../components/status-badge"
 import { WizardDialog } from "../../components/wizard-dialog"
-import { AppSidebar } from "../../components/app-sidebar"
-import { AppHeader } from "../../components/app-header"
 
 // Mock data
 const mockRentals = [
@@ -98,50 +96,45 @@ export default function LocacoesPage() {
   )
 
   return (
-    <div className="flex h-screen bg-background">
-      <AppSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AppHeader title="Locações" />
-
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-7xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-3xl font-bold text-foreground">Gerenciar Locações</h2>
-                <p className="text-muted-foreground">Visualize e gerencie todas as locações do sistema</p>
-              </div>
-              <Button onClick={() => setIsWizardOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Locação
-              </Button>
+    <>
+      <main className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-3xl font-bold text-foreground">Gerenciar Locações</h2>
+              <p className="text-muted-foreground">Visualize e gerencie todas as locações do sistema</p>
             </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Lista de Locações</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <FiltersDrawer filters={filters} />
-                  <TableSimple
-                    columns={columns}
-                    data={mockRentals.map((rental) => ({
-                      ...rental,
-                      status: <StatusBadge status={rental.status as any} />,
-                    }))}
-                    actions={renderActions}
-                    pagination={{
-                      currentPage: 1,
-                      totalPages: 4,
-                      onPageChange: (page) => console.log("Page:", page),
-                    }}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            <Button onClick={() => setIsWizardOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Locação
+            </Button>
           </div>
-        </main>
-      </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Lista de Locações</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <FiltersDrawer filters={filters} />
+                <TableSimple
+                  columns={columns}
+                  data={mockRentals.map((rental) => ({
+                    ...rental,
+                    status: <StatusBadge status={rental.status as any} />,
+                  }))}
+                  actions={renderActions}
+                  pagination={{
+                    currentPage: 1,
+                    totalPages: 4,
+                    onPageChange: (page) => console.log("Page:", page),
+                  }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
 
       <WizardDialog
         isOpen={isWizardOpen}
@@ -149,6 +142,6 @@ export default function LocacoesPage() {
         title="Nova Locação"
         description="Siga os passos para criar uma nova locação"
       />
-    </div>
+    </>
   )
 }

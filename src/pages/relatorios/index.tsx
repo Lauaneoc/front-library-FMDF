@@ -1,8 +1,6 @@
 
 import { FileText, Download, BarChart3, Users, BookOpen, Calendar, TrendingUp, AlertTriangle } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
-import { AppSidebar } from "../../components/app-sidebar"
-import { AppHeader } from "../../components/app-header"
 import { Badge } from "../../components/ui/badge"
 import { Button } from "../../components/ui/button"
 
@@ -80,7 +78,7 @@ const getCategoryColor = (category: string) => {
 
 export default function RelatoriosPage() {
   return (
-    <div>
+    <>
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
@@ -162,6 +160,6 @@ export default function RelatoriosPage() {
             </Card>
           </div>
         </main>
-      </div>
+    </>
   )
 }
