@@ -1,5 +1,21 @@
-export function useNovaTurma() {
-    const cursoOptions = [
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const schema = z.object({
+
+})
+
+export function useCreateTurma() {
+
+    const {
+        handleSubmit,
+        formState: {errors}
+    } = useForm<z.infer<typeof schema>>({
+        resolver: zodResolver(schema)
+    })
+
+        const cursoOptions = [
         { value: "ensino_medio", label: "Ensino Médio" },
         { value: "ensino_fundamental", label: "Ensino Fundamental" },
         { value: "tecnico", label: "Técnico" },
@@ -17,9 +33,15 @@ export function useNovaTurma() {
         { value: "2025", label: "2025" },
     ]
 
+    const onSubmit = handleSubmit(async () => {
+        // vai chamar a action aq
+    })
+
     return {
-        cursoOptions,
-        serieOptions,
+        onSubmit,
+        errors,
         anoLetivoOptions,
+        serieOptions,
+        cursoOptions
     }
 }

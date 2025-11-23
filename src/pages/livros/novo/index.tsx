@@ -1,7 +1,5 @@
 import { ArrowLeft, Save } from "lucide-react"
 import { Link } from "react-router-dom"
-import { AppSidebar } from "../../../components/app-sidebar"
-import { AppHeader } from "../../../components/app-header"
 import { Button } from "../../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
 import { FormField } from "../../../components/form-field"
