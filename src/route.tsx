@@ -12,6 +12,7 @@ import LivrosPage from "./pages/livros";
 import NovoLivroPage from "./pages/livros/novo";
 import LivroIsbnPage from "./pages/livros/isbn";
 import ConfiguracoesPage from "./pages/configuracoes";
+import AlunosPage from "./pages/alunos/page";
 
 export function RoutesPage() {
   return (
@@ -24,6 +25,9 @@ export function RoutesPage() {
             
             {/* Dashboard */}
             <Route path="dashboard" element={<DashboardPage />} />
+
+            {/* Alunos */}
+            <Route path="alunos" element={<AlunosPage />} />
             
             {/* Turmas */}
             <Route path="turmas" element={<TurmasPage />} />
