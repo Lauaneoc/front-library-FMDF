@@ -1,11 +1,41 @@
 import { Save, User, Settings, Shield } from "lucide-react"
+import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { FormField } from "../../components/form-field"
 import { Separator } from "../../components/ui/separator"
 import { Button } from "../../components/ui/button"
+import { BibliotecarioProvider } from "../../@shared/contexts/bibliotecario/BibliotecarioProvider"
+import { useBibliotecario } from "../../@shared/contexts/bibliotecario/useBibliotecario"
 
 export default function ConfiguracoesPage() {
+  return (
+    <BibliotecarioProvider id={1}>
+      <InnerConfiguracoesPage />
+    </BibliotecarioProvider>
+  )
+}
+
+function InnerConfiguracoesPage() {
+  const { bibliotecario } = useBibliotecario()
+  const [formData, setFormData] = useState({
+    cpf: bibliotecario?.cpf || "",
+    nome: bibliotecario?.nome || "",
+    email: bibliotecario?.email || "",
+  })
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  const handleSavePerfil = () => {
+    console.log("Salvando perfil:", formData)
+    // TODO: chamar bibliotecarioService.update(bibliotecario?.id, formData)
+  }
+
   return (
     <>
         <main className="flex-1 overflow-y-auto p-6">
@@ -42,18 +72,25 @@ export default function ConfiguracoesPage() {
                         <FormField
                           id="id"
                           label="ID"
-                          value="BIB001"
+                          value={bibliotecario?.id?.toString() || ""}
                           disabled
                           description="Identificador único (somente leitura)"
                         />
 
-                        <FormField id="cpf" label="CPF" placeholder="000.000.000-00" value="123.456.789-00" />
+                        <FormField
+                          id="cpf"
+                          label="CPF"
+                          placeholder="000.000.000-00"
+                          value={formData.cpf}
+                          onChange={(value) => handleInputChange("cpf", value)}
+                        />
 
                         <FormField
                           id="nome"
                           label="Nome Completo"
                           placeholder="Digite seu nome completo"
-                          value="João Silva Bibliotecário"
+                          value={formData.nome}
+                          onChange={(value) => handleInputChange("nome", value)}
                           required
                         />
 
@@ -62,7 +99,8 @@ export default function ConfiguracoesPage() {
                           label="Email"
                           type="email"
                           placeholder="seu.email@escola.com"
-                          value="joao.bibliotecario@escola.com"
+                          value={formData.email}
+                          onChange={(value) => handleInputChange("email", value)}
                           required
                         />
                       </div>
@@ -70,7 +108,7 @@ export default function ConfiguracoesPage() {
                       <Separator />
 
                       <div className="flex justify-end">
-                        <Button>
+                        <Button onClick={handleSavePerfil}>
                           <Save className="h-4 w-4 mr-2" />
                           Salvar Alterações
                         </Button>

@@ -6,6 +6,9 @@ import { FiltersDrawer } from "../../components/filters-drawer"
 import { TableSimple } from "../../components/table-simple"
 import { EstadoBadge } from "../../components/estado-badge"
 import { Badge } from "../../components/ui/badge"
+import { ExemplaresProvider } from "../../@shared/contexts/exemplares/ExemplaresProvider"
+import { useExemplares } from "../../@shared/contexts/exemplares/useExemplares"
+import { ExemplarInterface } from "../../@shared/interfaces/exemplarInterface"
 
 // Mock data
 const mockCopies = [
@@ -91,6 +94,16 @@ const filters = [
 ]
 
 export default function ExemplaresPage() {
+  return (
+    <ExemplaresProvider>
+      <InnerExemplaresPage />
+    </ExemplaresProvider>
+  )
+}
+
+function InnerExemplaresPage() {
+  const { exemplares } = useExemplares()
+
   const renderActions = (row: any) => (
     <div className="flex items-center gap-2">
       <Link to={`/exemplares/${row.id}`}>
@@ -108,6 +121,16 @@ export default function ExemplaresPage() {
       </Button>
     </div>
   )
+
+  const data = (exemplares as ExemplarInterface[] | null)?.map((e) => ({
+    id: e.id,
+    livro: e.nome_livro ?? e.isbn_livro,
+    estado: <EstadoBadge estado={e.estado as any} />,
+    anos: `${e.ano_aquisicao} - ${e.ano_descarte}`,
+    disponibilidade: (
+      <Badge variant="secondary">—</Badge>
+    ),
+  })) ?? []
 
   return (
     <>
@@ -135,19 +158,7 @@ export default function ExemplaresPage() {
                   <FiltersDrawer filters={filters} />
                   <TableSimple
                     columns={columns}
-                    data={mockCopies.map((copy) => ({
-                      ...copy,
-                      estado: <EstadoBadge estado={copy.estado as any} />,
-                      anos: `${copy.anoInicio} - ${copy.anoFim}`,
-                      disponibilidade: (
-                        <Badge
-                          variant={copy.disponibilidade === "Disponível" ? "default" : "secondary"}
-                          className={copy.disponibilidade === "Disponível" ? "bg-primary text-primary-foreground" : ""}
-                        >
-                          {copy.disponibilidade}
-                        </Badge>
-                      ),
-                    }))}
+                    data={data}
                     actions={renderActions}
                     pagination={{
                       currentPage: 1,

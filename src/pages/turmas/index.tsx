@@ -1,85 +1,48 @@
+"use client"
 import { Plus, Edit, Eye, Trash2 } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
+import { useMemo } from "react"
 import { Button } from "../../components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { FiltersDrawer } from "../../components/filters-drawer"
 import { TableSimple } from "../../components/table-simple"
-import { AppSidebar } from "../../components/app-sidebar"
-import { AppHeader } from "../../components/app-header"
-
-// Mock data
-const mockClasses = [
-  {
-    id: "T001",
-    curso: "Ensino Médio",
-    serie: "1º Ano",
-    anoLetivo: "2024",
-    qtdAlunos: 32,
-  },
-  {
-    id: "T002",
-    curso: "Ensino Médio",
-    serie: "1º Ano",
-    anoLetivo: "2024",
-    qtdAlunos: 28,
-  },
-  {
-    id: "T003",
-    curso: "Ensino Médio",
-    serie: "2º Ano",
-    anoLetivo: "2024",
-    qtdAlunos: 30,
-  },
-  {
-    id: "T004",
-    curso: "Ensino Médio",
-    serie: "3º Ano",
-    anoLetivo: "2024",
-    qtdAlunos: 25,
-  },
-]
+import { TurmasProvider } from "../../@shared/contexts/turmas/TurmasProvider"
+import { useTurmas } from "../../@shared/contexts/turmas/useTurmas"
+import { TurmaInterface } from "../../@shared/interfaces/turmaInterface"
+import { StudentProvider } from "../../@shared/contexts/student/StudentProvider"
+import { useStudent } from "../../@shared/contexts/student/useStudent"
 
 const columns = [
   { key: "id", label: "ID" },
   { key: "curso", label: "Curso" },
   { key: "serie", label: "Série" },
-  { key: "anoLetivo", label: "Ano Letivo", className: "text-center" },
+  { key: "ano_letivo", label: "Ano Letivo", className: "text-center" },
   { key: "qtdAlunos", label: "Qtd. Alunos", className: "text-center" },
 ]
 
 const filters = [
-  {
-    key: "curso",
-    label: "Curso",
-    type: "select" as const,
-    options: [
-      { value: "ensino_medio", label: "Ensino Médio" },
-      { value: "ensino_fundamental", label: "Ensino Fundamental" },
-    ],
-  },
-  {
-    key: "serie",
-    label: "Série",
-    type: "select" as const,
-    options: [
-      { value: "1ano", label: "1º Ano" },
-      { value: "2ano", label: "2º Ano" },
-      { value: "3ano", label: "3º Ano" },
-      { value: "4ano", label: "4º Ano" },
-    ],
-  },
-  {
-    key: "anoLetivo",
-    label: "Ano Letivo",
-    type: "select" as const,
-    options: [
-      { value: "2024", label: "2024" },
-      { value: "2023", label: "2023" },
-    ],
-  },
+  { key: "curso", label: "Curso", type: "text" as const },
+  { key: "serie", label: "Série", type: "text" as const },
+  { key: "ano_letivo", label: "Ano Letivo", type: "text" as const },
 ]
 
-export default function TurmasPage() {
+function Page() {
+  const { turmas } = useTurmas()
+  const { students } = useStudent()
+
+  const studentCounts = useMemo(() => {
+    const map = new Map<number, number>();
+    ;(students ?? []).forEach((s: any) => {
+      const key = s.id_turma
+      map.set(key, (map.get(key) || 0) + 1)
+    })
+    return map
+  }, [students])
+
+  const dataWithCounts = (turmas as TurmaInterface[] | null)?.map((t) => ({
+    ...t,
+    qtdAlunos: studentCounts.get(t.id) ?? 0,
+  })) ?? []
+
   const renderActions = (row: any) => (
     <div className="flex items-center gap-2">
       <Link to={`/turmas/${row.id}`}>
@@ -101,42 +64,47 @@ export default function TurmasPage() {
   const navigate = useNavigate()
 
   return (
-    <div>
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-7xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-3xl font-bold text-foreground">Gerenciar Turmas</h2>
-                <p className="text-muted-foreground">Visualize e gerencie todas as turmas cadastradas no sistema</p>
-              </div>
-                <Button onClick={() => {navigate("/turmas/nova")}}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nova Turma
-                </Button>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Lista de Turmas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <FiltersDrawer filters={filters} />
-                  <TableSimple
-                    columns={columns}
-                    data={mockClasses}
-                    actions={renderActions}
-                    pagination={{
-                      currentPage: 1,
-                      totalPages: 1,
-                      onPageChange: (page) => console.log("Page:", page),
-                    }}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
+    <div className="space-y-6 md:space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Gerenciar Turmas</h1>
+          <p className="text-sm md:text-base text-muted-foreground">Visualize e gerencie todas as turmas cadastradas no sistema</p>
+        </div>
+        <Button className="shadow-sm hover:shadow-md transition-shadow" onClick={() => navigate('/turmas/nova')}>
+          <Plus className="h-4 w-4 mr-2" />
+          Nova Turma
+        </Button>
       </div>
+
+      <div className="glass-effect rounded-xl p-6 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h2 className="text-xl font-semibold text-foreground">Lista de Turmas</h2>
+          <FiltersDrawer filters={filters} />
+        </div>
+
+        <div className="rounded-lg border border-border overflow-hidden bg-card">
+          <TableSimple
+            columns={columns}
+            data={dataWithCounts}
+            actions={renderActions}
+            pagination={{
+              currentPage: 1,
+              totalPages: 1,
+              onPageChange: (page) => console.log("Page:", page),
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function TurmasPage() {
+  return (
+    <StudentProvider>
+      <TurmasProvider>
+        <Page />
+      </TurmasProvider>
+    </StudentProvider>
   )
 }

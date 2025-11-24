@@ -1,5 +1,6 @@
 import { Plus, Edit, Eye, Trash2 } from "lucide-react"
 import { Link } from "react-router-dom"
+import { useMemo } from "react"
 import { Button } from "../../components/ui/button"
 import { AppSidebar } from "../../components/app-sidebar"
 import { AppHeader } from "../../components/app-header"
@@ -7,6 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/ca
 import { FiltersDrawer } from "../../components/filters-drawer"
 import { TableSimple } from "../../components/table-simple"
 import { Badge } from "../../components/ui/badge"
+import { LivrosProvider } from "../../@shared/contexts/livros/LivrosProvider"
+import { useLivros } from "../../@shared/contexts/livros/useLivros"
+import { ExemplaresProvider } from "../../@shared/contexts/exemplares/ExemplaresProvider"
+import { useExemplares } from "../../@shared/contexts/exemplares/useExemplares"
+import { LivroInterface } from "../../@shared/interfaces/livroInterface"
+import { ExemplarInterface } from "../../@shared/interfaces/exemplarInterface"
 
 // Mock data
 const mockBooks = [
@@ -90,6 +97,49 @@ const filters = [
 ]
 
 export default function LivrosPage() {
+  return (
+    <ExemplaresProvider>
+      <LivrosProvider>
+        <InnerLivrosPage />
+      </LivrosProvider>
+    </ExemplaresProvider>
+  )
+}
+
+function InnerLivrosPage() {
+  const { livros } = useLivros()
+  const { exemplares } = useExemplares()
+
+  const counts = useMemo(() => {
+    const map = new Map<string, { total: number }>();
+    ;(exemplares ?? []).forEach((ex: ExemplarInterface) => {
+      const isbn = ex.isbn_livro
+      const prev = map.get(isbn) ?? { total: 0 }
+      prev.total += 1
+      map.set(isbn, prev)
+    })
+    return map
+  }, [exemplares])
+
+  const data = (livros as LivroInterface[] | null)?.map((l) => {
+    const c = counts.get(l.isbn) ?? { total: 0 }
+    const exemplaresText = `${c.total}`
+    return {
+      isbn: l.isbn,
+      nome: l.nome,
+      disciplina: l.disciplina,
+      serie: l.serie,
+      exemplares: (
+        <div className="flex items-center justify-center gap-2">
+          <span>{exemplaresText}</span>
+          <Badge variant={c.total > 0 ? "default" : "destructive"} className={c.total > 0 ? "bg-primary text-primary-foreground" : ""}>
+            {c.total > 0 ? "Tem exemplares" : "Sem exemplares"}
+          </Badge>
+        </div>
+      ),
+    }
+  }) ?? []
+
   const renderActions = (row: any) => (
     <div className="flex items-center gap-2">
       <Link to={`/livros/${row.isbn}`}>
@@ -109,58 +159,42 @@ export default function LivrosPage() {
   )
 
   return (
-    
-
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-7xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-3xl font-bold text-foreground">Gerenciar Livros</h2>
-                <p className="text-muted-foreground">Visualize e gerencie todos os livros cadastrados no sistema</p>
-              </div>
-              <Link to="/livros/novo">
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Novo Livro
-                </Button>
-              </Link>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Lista de Livros</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <FiltersDrawer filters={filters} />
-                  <TableSimple
-                    columns={columns}
-                    data={mockBooks.map((book) => ({
-                      ...book,
-                      exemplares: (
-                        <div className="flex items-center justify-center gap-2">
-                          <span>{book.exemplares}</span>
-                          <Badge
-                            variant={book.disponiveis > 0 ? "default" : "destructive"}
-                            className={book.disponiveis > 0 ? "bg-primary text-primary-foreground" : ""}
-                          >
-                            {book.disponiveis > 0 ? "Disponível" : "Indisponível"}
-                          </Badge>
-                        </div>
-                      ),
-                    }))}
-                    actions={renderActions}
-                    pagination={{
-                      currentPage: 1,
-                      totalPages: 2,
-                      onPageChange: (page) => console.log("Page:", page),
-                    }}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+    <main className="flex-1 overflow-y-auto p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold text-foreground">Gerenciar Livros</h2>
+            <p className="text-muted-foreground">Visualize e gerencie todos os livros cadastrados no sistema</p>
           </div>
-        </main>
-      
+          <Link to="/livros/novo">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Novo Livro
+            </Button>
+          </Link>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Lista de Livros</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <FiltersDrawer filters={filters} />
+              <TableSimple
+                columns={columns}
+                data={data}
+                actions={renderActions}
+                pagination={{
+                  currentPage: 1,
+                  totalPages: 2,
+                  onPageChange: (page) => console.log("Page:", page),
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </main>
   )
 }

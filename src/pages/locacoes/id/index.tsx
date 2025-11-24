@@ -1,5 +1,6 @@
 import { ArrowLeft, Edit, BookOpen, User, Calendar, FileText } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
+import { useQuery } from "@tanstack/react-query"
 import { AppSidebar } from "../../../components/app-sidebar"
 import { AppHeader } from "../../../components/app-header"
 import { Button } from "../../../components/ui/button"
@@ -9,34 +10,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui
 import { Label } from "../../../components/ui/label"
 import { EstadoBadge } from "../../../components/estado-badge"
 import { Textarea } from "../../../components/ui/textarea"
-
-// Mock data
-const mockRental = {
-  id: "LOC001",
-  status: "Aberto",
-  aluno: {
-    matricula: "2024001",
-    nome: "Ana Silva Santos",
-    turma: "1º Ano A - Ensino Médio",
-  },
-  exemplar: {
-    id: "EX001",
-    livro: "Matemática - Volume 1",
-    isbn: "978-85-16-07234-5",
-    estado: "Novo",
-  },
-  datas: {
-    retirada: "15/01/2024",
-    prevista: "29/01/2024",
-    devolucao: null,
-  },
-  bibliotecario: "João Bibliotecário",
-  descricao: "Locação para estudos do primeiro bimestre",
-  observacoes: "",
-}
+import { locacaoService } from "../../../@shared/services/locacaoService"
 
 export default function LocacaoDetalhePage() {
-  const isOverdue = mockRental.status === "Aberto" && new Date() > new Date("2024-01-29")
+  const { id } = useParams()
+
+  const { data: rental, isLoading } = useQuery({
+    queryKey: ["locacao", id],
+    queryFn: () => locacaoService.getById(id as string),
+    enabled: !!id,
+  })
+
+  if (isLoading) return null
+
+  if (!rental) return <div>Locação não encontrada</div>
+
+  const isOverdue = rental.status === "Aberto" && rental.data_prevista && new Date() > new Date(rental.data_prevista)
 
   return (
     <div className="flex h-screen bg-background">
@@ -54,14 +43,14 @@ export default function LocacaoDetalhePage() {
                 </Button>
               </Link>
               <div className="flex-1">
-                <h2 className="text-3xl font-bold text-foreground">Locação {mockRental.id}</h2>
+                <h2 className="text-3xl font-bold text-foreground">Locação {rental.id}</h2>
                 <div className="flex items-center gap-2 mt-1">
-                  <StatusBadge status={mockRental.status as any} />
+                  <StatusBadge status={rental.status as any} />
                   {isOverdue && <Badge variant="destructive">Em Atraso</Badge>}
                 </div>
               </div>
               <div className="flex gap-2">
-                {mockRental.status === "Aberto" && (
+                {rental.status === "Aberto" && (
                   <Button>
                     <BookOpen className="h-4 w-4 mr-2" />
                     Finalizar Locação
@@ -86,18 +75,18 @@ export default function LocacaoDetalhePage() {
                 <CardContent className="space-y-4">
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Nome</Label>
-                    <p className="text-foreground">{mockRental.aluno.nome}</p>
+                    <p className="text-foreground">{rental.aluno || rental.matricula_aluno}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Matrícula</Label>
-                    <p className="text-foreground">{mockRental.aluno.matricula}</p>
+                    <p className="text-foreground">{rental.matricula_aluno}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Turma</Label>
-                    <p className="text-foreground">{mockRental.aluno.turma}</p>
+                    <p className="text-foreground">-</p>
                   </div>
                   <div className="pt-2">
-                    <Link to={`/alunos/${mockRental.aluno.matricula}`}>
+                    <Link to={`/alunos/${rental.matricula_aluno}`}>
                       <Button variant="outline" size="sm">
                         Ver Perfil do Aluno
                       </Button>
@@ -117,22 +106,22 @@ export default function LocacaoDetalhePage() {
                 <CardContent className="space-y-4">
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Livro</Label>
-                    <p className="text-foreground">{mockRental.exemplar.livro}</p>
+                    <p className="text-foreground">-</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">ID do Exemplar</Label>
-                    <p className="text-foreground">{mockRental.exemplar.id}</p>
+                    <p className="text-foreground">{rental.exemplar || rental.id_exemplar}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">ISBN</Label>
-                    <p className="text-foreground">{mockRental.exemplar.isbn}</p>
+                    <p className="text-foreground">-</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Estado</Label>
-                    <EstadoBadge estado={mockRental.exemplar.estado as any} />
+                    <EstadoBadge estado={"—" as any} />
                   </div>
                   <div className="pt-2">
-                    <Link to={`/exemplares/${mockRental.exemplar.id}`}>
+                    <Link to={`/exemplares/${rental.exemplar || rental.id_exemplar}`}>
                       <Button variant="outline" size="sm">
                         Ver Exemplar
                       </Button>
@@ -152,18 +141,18 @@ export default function LocacaoDetalhePage() {
                 <CardContent className="space-y-4">
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Data de Retirada</Label>
-                    <p className="text-foreground">{mockRental.datas.retirada}</p>
+                    <p className="text-foreground">{rental.data_emprestimo || "-"}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Data Prevista de Devolução</Label>
                     <p className={`${isOverdue ? "text-destructive font-medium" : "text-foreground"}`}>
-                      {mockRental.datas.prevista}
+                      {rental.data_prevista || "-"}
                       {isOverdue && " (Em Atraso)"}
                     </p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Data de Devolução</Label>
-                    <p className="text-foreground">{mockRental.datas.devolucao || "Não devolvido"}</p>
+                    <p className="text-foreground">{rental.data_devolucao || "Não devolvido"}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -179,22 +168,17 @@ export default function LocacaoDetalhePage() {
                 <CardContent className="space-y-4">
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Bibliotecário Responsável</Label>
-                    <p className="text-foreground">{mockRental.bibliotecario}</p>
+                    <p className="text-foreground">{rental.bibliotecario}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Descrição</Label>
-                    <p className="text-foreground">{mockRental.descricao}</p>
+                    <p className="text-foreground">{rental.descricao}</p>
                   </div>
                   <div>
                     <Label htmlFor="observacoes" className="text-sm font-medium text-muted-foreground">
                       Observações
                     </Label>
-                    <Textarea
-                      id="observacoes"
-                      placeholder="Adicione observações sobre esta locação..."
-                      value={mockRental.observacoes}
-                      className="mt-1"
-                    />
+                    <Textarea id="observacoes" placeholder="Adicione observações sobre esta locação..." value={rental.descricao || ""} className="mt-1" />
                   </div>
                 </CardContent>
               </Card>
