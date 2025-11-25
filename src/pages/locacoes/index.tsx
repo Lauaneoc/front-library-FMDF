@@ -3,6 +3,8 @@
 import { Plus, Edit, Eye, BookOpen } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useState } from "react"
+import { LocacoesProvider } from "../../@shared/contexts/locacoes/LocacoesProvider"
+import { useLocacoes } from "../../@shared/contexts/locacoes/useLocacoes"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { FiltersDrawer } from "../../components/filters-drawer"
@@ -10,39 +12,7 @@ import { TableSimple } from "../../components/table-simple"
 import { StatusBadge } from "../../components/status-badge"
 import { WizardDialog } from "../../components/wizard-dialog"
 
-// Mock data
-const mockRentals = [
-  {
-    id: "LOC001",
-    aluno: "Ana Silva Santos (2024001)",
-    exemplar: "EX001 - Matemática - Volume 1",
-    status: "Aberto",
-    retirada: "15/01/2024",
-    prevista: "29/01/2024",
-    devolucao: "-",
-    bibliotecario: "João Bibliotecário",
-  },
-  {
-    id: "LOC002",
-    aluno: "Carlos Eduardo Lima (2024002)",
-    exemplar: "EX045 - História do Brasil",
-    status: "Finalizado",
-    retirada: "02/01/2024",
-    prevista: "16/01/2024",
-    devolucao: "14/01/2024",
-    bibliotecario: "Maria Bibliotecária",
-  },
-  {
-    id: "LOC003",
-    aluno: "Maria Fernanda Costa (2024003)",
-    exemplar: "EX123 - Física Moderna",
-    status: "Aberto",
-    retirada: "20/12/2023",
-    prevista: "03/01/2024",
-    devolucao: "-",
-    bibliotecario: "João Bibliotecário",
-  },
-]
+// (dados vindos da API via LocacoesProvider)
 
 const columns = [
   { key: "id", label: "ID" },
@@ -75,7 +45,16 @@ const filters = [
 ]
 
 export default function LocacoesPage() {
+  return (
+    <LocacoesProvider>
+      <InnerLocacoesPage />
+    </LocacoesProvider>
+  )
+}
+
+function InnerLocacoesPage() {
   const [isWizardOpen, setIsWizardOpen] = useState(false)
+  const { locacoes } = useLocacoes()
 
   const renderActions = (row: any) => (
     <div className="flex items-center gap-2">
@@ -94,6 +73,17 @@ export default function LocacoesPage() {
       </Button>
     </div>
   )
+
+  const data = (locacoes || []).map((l) => ({
+    id: l.id,
+    aluno: l.aluno || l.matricula_aluno || "-",
+    exemplar: l.exemplar ? `EX${l.exemplar.toString().padStart(3, "0")}` : String(l.id_exemplar || "-"),
+    status: <StatusBadge status={l.status as any} />,
+    retirada: l.data_emprestimo ? new Date(l.data_emprestimo).toLocaleDateString() : "-",
+    prevista: l.data_prevista ? new Date(l.data_prevista).toLocaleDateString() : "-",
+    devolucao: l.data_devolucao ? new Date(l.data_devolucao).toLocaleDateString() : "-",
+    bibliotecario: l.bibliotecario || "-",
+  }))
 
   return (
     <>
@@ -119,10 +109,7 @@ export default function LocacoesPage() {
                 <FiltersDrawer filters={filters} />
                 <TableSimple
                   columns={columns}
-                  data={mockRentals.map((rental) => ({
-                    ...rental,
-                    status: <StatusBadge status={rental.status as any} />,
-                  }))}
+                  data={data}
                   actions={renderActions}
                   pagination={{
                     currentPage: 1,
