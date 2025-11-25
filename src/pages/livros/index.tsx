@@ -1,9 +1,7 @@
 import { Plus, Edit, Eye, Trash2 } from "lucide-react"
 import { Link } from "react-router-dom"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { Button } from "../../components/ui/button"
-import { AppSidebar } from "../../components/app-sidebar"
-import { AppHeader } from "../../components/app-header"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
 import { FiltersDrawer } from "../../components/filters-drawer"
 import { TableSimple } from "../../components/table-simple"
@@ -14,46 +12,17 @@ import { ExemplaresProvider } from "../../@shared/contexts/exemplares/Exemplares
 import { useExemplares } from "../../@shared/contexts/exemplares/useExemplares"
 import { LivroInterface } from "../../@shared/interfaces/livroInterface"
 import { ExemplarInterface } from "../../@shared/interfaces/exemplarInterface"
-
-// Mock data
-const mockBooks = [
-  {
-    isbn: "978-85-16-07234-5",
-    nome: "Matemática - Volume 1",
-    disciplina: "Matemática",
-    serie: "1º Ano",
-    exemplares: "12/15",
-    disponiveis: 12,
-    total: 15,
-  },
-  {
-    isbn: "978-85-16-07235-2",
-    nome: "História do Brasil",
-    disciplina: "História",
-    serie: "2º Ano",
-    exemplares: "8/10",
-    disponiveis: 8,
-    total: 10,
-  },
-  {
-    isbn: "978-85-16-07236-9",
-    nome: "Física Moderna",
-    disciplina: "Física",
-    serie: "3º Ano",
-    exemplares: "5/8",
-    disponiveis: 5,
-    total: 8,
-  },
-  {
-    isbn: "978-85-16-07237-6",
-    nome: "Literatura Brasileira",
-    disciplina: "Português",
-    serie: "2º Ano",
-    exemplares: "15/20",
-    disponiveis: 15,
-    total: 20,
-  },
-]
+import { livroService } from "../../@shared/services/livroService"
+import { queryClient } from "../../@shared/api/queryClient"
+import { useToast } from "../../hooks/use-toast"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from "../../components/ui/alert-dialog"
 
 const columns = [
   { key: "isbn", label: "ISBN" },
@@ -74,13 +43,13 @@ const filters = [
     label: "Disciplina",
     type: "select" as const,
     options: [
-      { value: "matematica", label: "Matemática" },
-      { value: "portugues", label: "Português" },
-      { value: "historia", label: "História" },
-      { value: "geografia", label: "Geografia" },
-      { value: "fisica", label: "Física" },
-      { value: "quimica", label: "Química" },
-      { value: "biologia", label: "Biologia" },
+      { value: "Matemática", label: "Matemática" },
+      { value: "Português", label: "Português" },
+      { value: "História", label: "História" },
+      { value: "Geografia", label: "Geografia" },
+      { value: "Física", label: "Física" },
+      { value: "Química", label: "Química" },
+      { value: "Biologia", label: "Biologia" },
     ],
   },
   {
@@ -88,10 +57,10 @@ const filters = [
     label: "Série",
     type: "select" as const,
     options: [
-      { value: "1ano", label: "1º Ano" },
-      { value: "2ano", label: "2º Ano" },
-      { value: "3ano", label: "3º Ano" },
-      { value: "4ano", label: "4º Ano" },
+      { value: "1º Ano", label: "1º Ano" },
+      { value: "2º Ano", label: "2º Ano" },
+      { value: "3º Ano", label: "3º Ano" },
+      { value: "4º Ano", label: "4º Ano" },
     ],
   },
 ]
@@ -109,6 +78,36 @@ export default function LivrosPage() {
 function InnerLivrosPage() {
   const { livros } = useLivros()
   const { exemplares } = useExemplares()
+  const { toast } = useToast()
+  const [deleteIsbn, setDeleteIsbn] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
+  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
+
+  const handleDeleteClick = (isbn: string) => {
+    setDeleteIsbn(isbn)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!deleteIsbn) return
+    setDeleting(true)
+    try {
+      await livroService.remove(deleteIsbn)
+      await queryClient.invalidateQueries({ queryKey: ["livros"] })
+      toast({
+        title: "Sucesso",
+        description: "Livro removido com sucesso",
+      })
+      setDeleteIsbn(null)
+    } catch (err: any) {
+      toast({
+        title: "Erro",
+        description: err.response?.data?.message || "Erro ao remover livro",
+        variant: "destructive",
+      })
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   const counts = useMemo(() => {
     const map = new Map<string, { total: number }>();
@@ -152,49 +151,109 @@ function InnerLivrosPage() {
           <Edit className="h-4 w-4" />
         </Button>
       </Link>
-      <Button variant="ghost" size="sm">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => handleDeleteClick(row.isbn)}
+      >
         <Trash2 className="h-4 w-4" />
       </Button>
     </div>
   )
 
-  return (
-    <main className="flex-1 overflow-y-auto p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-foreground">Gerenciar Livros</h2>
-            <p className="text-muted-foreground">Visualize e gerencie todos os livros cadastrados no sistema</p>
-          </div>
-          <Link to="/livros/novo">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Livro
-            </Button>
-          </Link>
-        </div>
+  const handleFiltersChange = (filters: Record<string, string>) => {
+    setActiveFilters(filters)
+  }
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Lista de Livros</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <FiltersDrawer filters={filters} />
-              <TableSimple
-                columns={columns}
-                data={data}
-                actions={renderActions}
-                pagination={{
-                  currentPage: 1,
-                  totalPages: 2,
-                  onPageChange: (page) => console.log("Page:", page),
-                }}
-              />
+  const normalize = (value: string) =>
+    value
+      .toString()
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "")
+      .toLowerCase()
+
+  const filteredData = useMemo(() => {
+    return data.filter((row: any) => {
+      if (activeFilters.nome && !row.nome.toLowerCase().includes(activeFilters.nome.toLowerCase())) {
+        return false
+      }
+
+      if (activeFilters.disciplina && activeFilters.disciplina !== "all") {
+        const rowVal = row.disciplina ? normalize(row.disciplina) : ""
+        const filterVal = normalize(activeFilters.disciplina)
+        if (!rowVal.includes(filterVal)) return false
+      }
+
+      if (activeFilters.serie && activeFilters.serie !== "all") {
+        const rowVal = row.serie ? normalize(row.serie) : ""
+        const filterVal = normalize(activeFilters.serie)
+        if (!rowVal.includes(filterVal)) return false
+      }
+
+      return true
+    })
+  }, [data, activeFilters])
+
+  return (
+    <>
+      <main className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-3xl font-bold text-foreground">Gerenciar Livros</h2>
+              <p className="text-muted-foreground">Visualize e gerencie todos os livros cadastrados no sistema</p>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </main>
+            <Link to="/livros/novo">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Novo Livro
+              </Button>
+            </Link>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Lista de Livros</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <FiltersDrawer filters={filters} onFiltersChange={handleFiltersChange} />
+                <TableSimple
+                  columns={columns}
+                  data={filteredData}
+                  actions={renderActions}
+                  pagination={{
+                    currentPage: 1,
+                    totalPages: 2,
+                    onPageChange: (page) => console.log("Page:", page),
+                  }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+
+      <AlertDialog open={deleteIsbn !== null} onOpenChange={() => setDeleteIsbn(null)}>
+        <AlertDialogContent className="bg-[#242424] border border-border">
+          <AlertDialogTitle>Remover Livro</AlertDialogTitle>
+          <AlertDialogDescription>
+            Tem certeza que deseja remover este livro? Esta ação não pode ser desfeita.
+          </AlertDialogDescription>
+          <div className="flex gap-3 justify-end">
+            <AlertDialogCancel className="border-border hover:bg-muted">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              disabled={deleting}
+              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+            >
+              {deleting ? "Removendo..." : "Remover"}
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }

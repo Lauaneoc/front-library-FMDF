@@ -1,11 +1,26 @@
 "use client"
 import { Plus, Edit, Eye, Trash2 } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "../../components/ui/button"
 import { FiltersDrawer } from "../../components/filters-drawer"
 import { TableSimple } from "../../components/table-simple"
 import { StudentProvider } from "../../@shared/contexts/student/StudentProvider"
 import { useStudent } from "../../@shared/contexts/student/useStudent"
 import { StudentInterface } from "../../@shared/interfaces/studentInterface"
+import { studentService } from "../../@shared/services/studentService"
+import { queryClient } from "../../@shared/api/queryClient"
+import { useToast } from "../../hooks/use-toast"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "../../components/ui/alert-dialog"
+import { useState } from "react"
 
 const columns = [
   { key: "matricula", label: "Matrícula" },
@@ -49,10 +64,39 @@ const filters = [
 
 function Page() {
 
+  const navigate = useNavigate()
   const { students } = useStudent()
 
   if(students == null) {
     return 'oi'
+  }
+
+  const { toast } = useToast()
+  const [deleteMatricula, setDeleteMatricula] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
+
+  const handleDeleteClick = (matricula: string) => {
+    setDeleteMatricula(matricula)
+    setConfirmOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!deleteMatricula) return
+    setDeleting(true)
+    try {
+      await studentService.remove(deleteMatricula)
+      await queryClient.invalidateQueries({ queryKey: ["students"] })
+      toast({ title: "Aluno removido", description: "Aluno removido com sucesso" })
+      setConfirmOpen(false)
+      setDeleteMatricula(null)
+    } catch (err) {
+      console.error(err)
+      toast({ title: "Erro", description: "Erro ao remover aluno" })
+    } finally {
+      setDeleting(false)
+    }
   }
 
   const renderActions = (row: any) => (
@@ -60,14 +104,25 @@ function Page() {
         <Button variant="ghost" size="sm">
           <Eye className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" onClick={() => navigate(`/alunos/${row.matricula}/editar`)}>
           <Edit className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" onClick={() => handleDeleteClick(row.matricula)}>
           <Trash2 className="h-4 w-4" />
         </Button>
     </div>
   )
+
+  const handleFiltersChange = (filters: Record<string, string>) => {
+    setActiveFilters(filters)
+  }
+
+  const filteredStudents = (students ?? []).filter((student) => {
+    if (activeFilters.nome && !student.nome.toLowerCase().includes(activeFilters.nome.toLowerCase())) {
+      return false
+    }
+    return true
+  })
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -76,7 +131,7 @@ function Page() {
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Gerenciar Alunos</h1>
           <p className="text-sm md:text-base text-muted-foreground">Visualize e gerencie todos os alunos cadastrados no sistema</p>
         </div>
-        <Button className="shadow-sm hover:shadow-md transition-shadow">
+        <Button className="shadow-sm hover:shadow-md transition-shadow" onClick={() => navigate("/alunos/novo")}>
           <Plus className="h-4 w-4 mr-2" />
           Novo Aluno
         </Button>
@@ -85,13 +140,13 @@ function Page() {
       <div className="glass-effect rounded-xl p-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <h2 className="text-xl font-semibold text-foreground">Lista de Alunos</h2>
-          <FiltersDrawer filters={filters} />
+          <FiltersDrawer filters={filters} onFiltersChange={handleFiltersChange} />
         </div>
 
         <div className="rounded-lg border border-border overflow-hidden bg-card">
           <TableSimple
             columns={columns}
-            data={students ?? []}
+            data={filteredStudents}
             actions={renderActions}
             pagination={{
               currentPage: 1,
@@ -100,6 +155,22 @@ function Page() {
             }}
           />
         </div>
+        <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja excluir este aluno? Esta ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmDelete} disabled={deleting}>
+                {deleting ? 'Apagando...' : 'Excluir'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   )
