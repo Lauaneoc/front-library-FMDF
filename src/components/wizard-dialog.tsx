@@ -90,8 +90,7 @@ export function WizardDialog({ isOpen, onClose, title, description }: WizardDial
         return (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Buscar Aluno</Label>
-              <Input placeholder="Digite o nome ou matrícula do aluno" />
+              <Input label="Buscar Aluno" placeholder="Digite o nome ou matrícula do aluno" />
             </div>
             <div className="space-y-2">
               <Label>Alunos Encontrados</Label>
@@ -126,8 +125,7 @@ export function WizardDialog({ isOpen, onClose, title, description }: WizardDial
         return (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Buscar Exemplar</Label>
-              <Input placeholder="Digite o nome do livro ou ID do exemplar" />
+              <Input label="Buscar Exemplar" placeholder="Digite o nome do livro ou ID do exemplar" />
             </div>
             <div className="space-y-2">
               <Label>Exemplares Disponíveis</Label>
@@ -170,13 +168,12 @@ export function WizardDialog({ isOpen, onClose, title, description }: WizardDial
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Data de Retirada</Label>
-                <Input type="date" value={new Date().toISOString().split("T")[0]} disabled />
+                <Input label="Data de Retirada" type="date" value={new Date().toISOString().split("T")[0]} disabled />
                 <p className="text-xs text-muted-foreground">Data atual (automática)</p>
               </div>
               <div className="space-y-2">
-                <Label>Data Prevista de Devolução</Label>
                 <Input
+                label="Data Prevista de Devolução"
                   type="date"
                   value={returnDate}
                   onChange={(e) => setReturnDate(e.target.value)}
@@ -185,8 +182,7 @@ export function WizardDialog({ isOpen, onClose, title, description }: WizardDial
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Descrição (Opcional)</Label>
-              <Input placeholder="Observações sobre a locação" />
+              <Input label="Descrição (Opcional)" placeholder="Observações sobre a locação" />
             </div>
 
             {/* Summary */}
