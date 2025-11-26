@@ -74,7 +74,7 @@ export default function EditarLivroPage() {
         disciplina: form.disciplina,
         serie: form.serie,
         ano_publicacao: parseInt(form.anoPublicacao),
-        edicao: form.edicao || null,
+        edicao: form.edicao || undefined,
       })
 
       await queryClient.invalidateQueries({ queryKey: ["livros"] })
@@ -118,28 +118,23 @@ export default function EditarLivroPage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="isbn" className="text-foreground font-medium">ISBN *</Label>
-              <Input id="isbn" value={form.isbn} onChange={(e) => handleChange('isbn', e.target.value)} className="bg-input border-border" />
+              <Input label="ISBN *" id="isbn" value={form.isbn} onChange={(e) => handleChange('isbn', e.target.value)} className="bg-input border-border" />
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="nome" className="text-foreground font-medium">Nome do Livro *</Label>
-              <Input id="nome" value={form.nome} onChange={(e) => handleChange('nome', e.target.value)} className="bg-input border-border" />
+              <Input label="Nome do Livro *" id="nome" value={form.nome} onChange={(e) => handleChange('nome', e.target.value)} className="bg-input border-border" />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="autor" className="text-foreground font-medium">Autor *</Label>
-              <Input id="autor" value={form.autor} onChange={(e) => handleChange('autor', e.target.value)} className="bg-input border-border" />
+              <Input label="Autor *" id="autor" value={form.autor} onChange={(e) => handleChange('autor', e.target.value)} className="bg-input border-border" />
+            </div> 
+
+            <div className="space-y-2">
+              <Input label="Editora *" id="editora" value={form.editora} onChange={(e) => handleChange('editora', e.target.value)} className="bg-input border-border" />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="editora" className="text-foreground font-medium">Editora *</Label>
-              <Input id="editora" value={form.editora} onChange={(e) => handleChange('editora', e.target.value)} className="bg-input border-border" />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="disciplina" className="text-foreground font-medium">Disciplina *</Label>
-              <Input id="disciplina" value={form.disciplina} onChange={(e) => handleChange('disciplina', e.target.value)} className="bg-input border-border" />
+              <Input label="Disciplina *" id="disciplina" value={form.disciplina} onChange={(e) => handleChange('disciplina', e.target.value)} className="bg-input border-border" />
             </div>
 
             <div className="space-y-2">
@@ -157,13 +152,11 @@ export default function EditarLivroPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="anoPublicacao" className="text-foreground font-medium">Ano de Publicação *</Label>
-              <Input id="anoPublicacao" type="number" value={form.anoPublicacao} onChange={(e) => handleChange('anoPublicacao', e.target.value)} className="bg-input border-border" />
+              <Input label="Ano de Publicação *" id="anoPublicacao" type="number" value={form.anoPublicacao} onChange={(e) => handleChange('anoPublicacao', e.target.value)} className="bg-input border-border" />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edicao" className="text-foreground font-medium">Edição</Label>
-              <Input id="edicao" value={form.edicao} onChange={(e) => handleChange('edicao', e.target.value)} className="bg-input border-border" />
+              <Input label="Edição" id="edicao" value={form.edicao} onChange={(e) => handleChange('edicao', e.target.value)} className="bg-input border-border" />
             </div>
 
           </div>
