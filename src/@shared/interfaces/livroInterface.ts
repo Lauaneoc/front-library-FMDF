@@ -6,5 +6,5 @@ export interface LivroInterface {
   disciplina: string;
   serie: string;
   ano_publicacao: number;
-  edicao: string;
+  edicao?: string;
 }
