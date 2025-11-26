@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../config/api";
+import { LivroInterface } from "../interfaces/livroInterface";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -11,16 +12,7 @@ export const livroService = {
     console.log({ data });
     return data;
   },
-  create: async (payload: {
-    isbn: string;
-    nome: string;
-    autor: string;
-    editora: string;
-    disciplina: string;
-    serie: string;
-    ano_publicacao: number;
-    edicao: string | null;
-  }) => {
+  create: async (payload: LivroInterface) => {
     const { data } = await api.post("/livros/novo", payload);
     return data;
   },
@@ -28,16 +20,7 @@ export const livroService = {
     const { data } = await api.get(`/livros/buscar/${isbn}`);
     return data;
   },
-  update: async (isbn: string, payload: {
-    isbn: string;
-    nome: string;
-    autor: string;
-    editora: string;
-    disciplina: string;
-    serie: string;
-    ano_publicacao: number;
-    edicao: string | null;
-  }) => {
+  update: async (isbn: string, payload: LivroInterface) => {
     const { data } = await api.put(`/livros/atualizar/${isbn}`, payload);
     return data;
   },
