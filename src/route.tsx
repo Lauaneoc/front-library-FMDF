@@ -11,7 +11,7 @@ import ExemplaresPage from "./pages/exemplares";
 import LivrosPage from "./pages/livros";
 import NovoLivroPage from "./pages/livros/novo";
 import LivroIsbnPage from "./pages/livros/isbn";
-import EditarLivroPage from "./pages/livros/[isbn]/editar";
+import EditarLivroPage from "./pages/livros/update";
 import ConfiguracoesPage from "./pages/configuracoes";
 import AlunosPage from "./pages/alunos/page";
 import NovoAlunoPage from "./pages/alunos/novo";

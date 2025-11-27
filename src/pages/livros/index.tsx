@@ -1,5 +1,5 @@
 import { Plus, Edit, Eye, Trash2 } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useMemo, useState } from "react"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -12,9 +12,6 @@ import { ExemplaresProvider } from "../../@shared/contexts/exemplares/Exemplares
 import { useExemplares } from "../../@shared/contexts/exemplares/useExemplares"
 import { LivroInterface } from "../../@shared/interfaces/livroInterface"
 import { ExemplarInterface } from "../../@shared/interfaces/exemplarInterface"
-import { livroService } from "../../@shared/services/livroService"
-import { queryClient } from "../../@shared/api/queryClient"
-import { useToast } from "../../hooks/use-toast"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -65,22 +62,11 @@ const filters = [
   },
 ]
 
-export default function LivrosPage() {
-  return (
-    <ExemplaresProvider>
-      <LivrosProvider>
-        <InnerLivrosPage />
-      </LivrosProvider>
-    </ExemplaresProvider>
-  )
-}
-
 function InnerLivrosPage() {
-  const { livros } = useLivros()
+  const navigate = useNavigate()
+  const { livros, deleteOneBook, isPendingDeleteBook } = useLivros()
   const { exemplares } = useExemplares()
-  const { toast } = useToast()
   const [deleteIsbn, setDeleteIsbn] = useState<string | null>(null)
-  const [deleting, setDeleting] = useState(false)
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
 
   const handleDeleteClick = (isbn: string) => {
@@ -89,24 +75,8 @@ function InnerLivrosPage() {
 
   const handleConfirmDelete = async () => {
     if (!deleteIsbn) return
-    setDeleting(true)
-    try {
-      await livroService.remove(deleteIsbn)
-      await queryClient.invalidateQueries({ queryKey: ["livros"] })
-      toast({
-        title: "Sucesso",
-        description: "Livro removido com sucesso",
-      })
-      setDeleteIsbn(null)
-    } catch (err: any) {
-      toast({
-        title: "Erro",
-        description: err.response?.data?.message || "Erro ao remover livro",
-        variant: "destructive",
-      })
-    } finally {
-      setDeleting(false)
-    }
+    await deleteOneBook.mutateAsync(deleteIsbn)
+    setDeleteIsbn(null)
   }
 
   const counts = useMemo(() => {
@@ -139,18 +109,16 @@ function InnerLivrosPage() {
     }
   }) ?? []
 
-  const renderActions = (row: any) => (
+  const renderActions = (row: Record<string, any>) => (
     <div className="flex items-center gap-2">
       <Link to={`/livros/${row.isbn}`}>
         <Button variant="ghost" size="sm">
           <Eye className="h-4 w-4" />
         </Button>
       </Link>
-      <Link to={`/livros/${row.isbn}/editar`}>
-        <Button variant="ghost" size="sm">
-          <Edit className="h-4 w-4" />
-        </Button>
-      </Link>
+      <Button variant="ghost" size="sm" onClick={() => navigate(`/livros/${row.isbn}/editar`, { state: { livro: row } })}>
+        <Edit className="h-4 w-4" />
+      </Button>
       <Button
         variant="ghost"
         size="sm"
@@ -246,14 +214,24 @@ function InnerLivrosPage() {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
-              disabled={deleting}
+              disabled={isPendingDeleteBook}
               className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
             >
-              {deleting ? "Removendo..." : "Remover"}
+              {isPendingDeleteBook ? "Removendo..." : "Remover"}
             </AlertDialogAction>
           </div>
         </AlertDialogContent>
       </AlertDialog>
     </>
+  )
+}
+
+export default function LivrosPage() {
+  return (
+    <ExemplaresProvider>
+      <LivrosProvider>
+        <InnerLivrosPage />
+      </LivrosProvider>
+    </ExemplaresProvider>
   )
 }

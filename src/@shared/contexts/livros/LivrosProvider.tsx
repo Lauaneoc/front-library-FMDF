@@ -8,6 +8,9 @@ interface LivrosContextData {
   livros: LivroInterface[] | null;
   isLoading: boolean;
   createOneBook: any;
+  updateOneBook: any
+  deleteOneBook: any;
+  isPendingDeleteBook: any
 }
 
 export const LivrosContext = createContext<LivrosContextData | null>(null);
@@ -41,12 +44,57 @@ export function LivrosProvider({ children }: { children: ReactNode }) {
     },
   })
 
+  const updateOneBook = useMutation({
+    mutationFn: (
+      value: LivroInterface
+    ) => livroService.update(value.isbn, value),
+    onSuccess: () => {
+      toast({
+        title: "Sucesso",
+        description: "Livro atualizado com sucesso!",
+        variant: "default"
+      })
+      queryClient.invalidateQueries({ queryKey: ["livros"] })
+    },
+    onError: () => {
+      toast({
+          title: "Erro",
+          description: "Erro ao atualizar livro!",
+          variant: "destructive"
+      })
+    },
+  })
+
+  const {mutateAsync: deleteOneBook, isPending: isPendingDeleteBook} = useMutation({
+    mutationFn: (
+      value: LivroInterface
+    ) => livroService.remove(value.isbn),
+    onSuccess: () => {
+      toast({
+        title: "Sucesso",
+        description: "Livro deletado com sucesso!",
+        variant: "default"
+      })
+      queryClient.invalidateQueries({ queryKey: ["livros"] })
+    },
+    onError: () => {
+      toast({
+          title: "Erro",
+          description: "Erro ao deletar livro!",
+          variant: "destructive"
+      })
+    },
+  })
+
   return (
     <LivrosContext.Provider
       value={{
         livros,
         isLoading,
         createOneBook,
+        updateOneBook,
+        deleteOneBook,
+        isPendingDeleteBook
       }}
     >
       {children}
