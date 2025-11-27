@@ -116,32 +116,28 @@ export default function EditarAlunoPage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="matricula" className="text-foreground font-medium">Matrícula *</Label>
-              <Input id="matricula" value={form.matricula} onChange={(e) => handleChange('matricula', e.target.value)} className="bg-input border-border" />
+              <Input label="Matrícula *" id="matricula" value={form.matricula} onChange={(e) => handleChange('matricula', e.target.value)} className="bg-input border-border" />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="cpf" className="text-foreground font-medium">CPF *</Label>
-              <Input id="cpf" value={form.cpf} onChange={(e) => handleChange('cpf', e.target.value.replace(/\D/g, '').slice(0,11))} maxLength={11} className="bg-input border-border" />
+              <Input label="CPF *" id="cpf" value={form.cpf} onChange={(e) => handleChange('cpf', e.target.value.replace(/\D/g, '').slice(0,11))} maxLength={11} className="bg-input border-border" />
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="nome" className="text-foreground font-medium">Nome Completo *</Label>
-              <Input id="nome" value={form.nome} onChange={(e) => handleChange('nome', e.target.value)} className="bg-input border-border" />
+              <Input label="Nome Completo *" id="nome" value={form.nome} onChange={(e) => handleChange('nome', e.target.value)} className="bg-input border-border" />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="data_nascimento" className="text-foreground font-medium">Data de Nascimento *</Label>
-              <Input id="data_nascimento" type="date" value={form.data_nascimento} onChange={(e) => handleChange('data_nascimento', e.target.value)} className="bg-input border-border" />
+              <Input label="Data de Nascimento *" id="data_nascimento" type="date" value={form.data_nascimento} onChange={(e) => handleChange('data_nascimento', e.target.value)} className="bg-input border-border" />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="turma" className="text-foreground font-medium">Turma *</Label>
+              <Input label="Turma *" id="turma" value={form.id_turma} onChange={(e) => handleChange('id_turma', e.target.value)} className="bg-input border-border" />
               <Select value={form.id_turma} onValueChange={(value) => handleChange('id_turma', value)}>
                 <SelectTrigger className="bg-input border-border">
                   <SelectValue placeholder="Selecione uma turma" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent >
                   {turmas.map((turma: TurmaInterface) => (
                     <SelectItem key={turma.id} value={turma.id.toString()}>
                       {turma.serie} - {turma.curso} ({turma.ano_letivo})
