@@ -1,5 +1,5 @@
 "use client"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useParams } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { Input } from "../../../components/ui/input"
@@ -7,20 +7,19 @@ import { Label } from "../../../components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
 import { Card } from "../../../components/ui/card"
 import { useUpdateBook } from "./useUpdadeBook"
-import { LivroInterface } from "../../../@shared/interfaces/livroInterface"
 import { Controller } from "react-hook-form"
+import { LivrosProvider } from "../../../@shared/contexts/livros/LivrosProvider"
 
-export default function EditarLivroPage() {
-  const { state } = useLocation();
-  const livroData = state?.vendorData as LivroInterface;
+function Page() {
+  const { isbn } = useParams<{ isbn: string }>();
 
   const { 
     onSubmit, 
     register, 
     control, 
     loading, 
-    navigate 
-  } = useUpdateBook(livroData)
+    navigate
+  } = useUpdateBook(isbn ?? "")
 
   return (
     <div className="space-y-6 p-6">
@@ -162,5 +161,13 @@ export default function EditarLivroPage() {
         </form>
       </Card>
     </div>
+  )
+}
+
+export default function EditarLivroPage() {
+  return (
+    <LivrosProvider>
+      <Page />
+    </LivrosProvider>
   )
 }

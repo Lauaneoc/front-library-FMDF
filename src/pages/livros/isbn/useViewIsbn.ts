@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLivros } from "../../../@shared/contexts/livros/useLivros";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 const schema = z.object({
   isbn: z.string().min(1, "Digite o ISBN do livro")
@@ -28,53 +29,43 @@ const schema = z.object({
 })
 
 
-export function useCreateBook() {
-    const { createOneBook, isPendingCreateBook} = useLivros()
+export function useViewBookIsbn(isbn: string) {
+    const { findOneBook } = useLivros()
+
+    console.log({isbn})
+    const { data, isLoading: isLoadingBook } = findOneBook(isbn);
 
     const {
-        handleSubmit,
         formState: { errors },
         register,
-        control
+        control,
+        reset
     } = useForm<z.infer<typeof schema>>({
-        resolver: zodResolver(schema)
+        resolver: zodResolver(schema),
     })
 
-    const [loading, setLoading] = useState(false)
-    
-    const navigate = useNavigate()
+    console.log({data})
 
-
-    const onSubmit = handleSubmit(async (data) => {
-        setLoading(true)
-        try {
-        const payload = {
+     useEffect(() => {
+        if (data) {
+        reset({
+            ano_publicacao: String(data.ano_publicacao),
+            autor: data.autor,
+            disciplina: data.disciplina,
+            edicao: data.edicao || "",
+            editora: data.editora,
             isbn: data.isbn,
             nome: data.nome,
-            autor: data.autor,
-            editora: data.editora,
-            disciplina: data.disciplina,
-            serie: data.serie,
-            ano_publicacao: parseInt(data.ano_publicacao),
-            edicao: data.edicao || null,
+            serie: data.serie as "1º Ano" | "2º Ano" | "3º Ano",
+        });
         }
-
-        await createOneBook.mutateAsync(payload);
-        
-            navigate("/livros")
-        } catch (err: any) {
-            console.error(err)
-        } finally {
-            setLoading(false)
-        }
-    })
+    }, [data, reset]);
 
     return {
-        onSubmit,
         errors,
-        loading,
         register, 
         control,
-        isPendingCreateBook
+        data,
+        isLoadingBook
     }
 }

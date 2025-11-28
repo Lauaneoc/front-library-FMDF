@@ -9,7 +9,7 @@ const api = axios.create({
 export const livroService = {
   getAll: async () => {
     const { data } = await api.get("/livros/listar");
-    console.log({ data });
+    console.log({data});
     return data;
   },
   create: async (payload: LivroInterface) => {

@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLivros } from "../../../@shared/contexts/livros/useLivros";
 import { useNavigate } from "react-router-dom";
-import { LivroInterface } from "../../../@shared/interfaces/livroInterface";
+import { useQuery } from "@tanstack/react-query";
 
 const schema = z.object({
   isbn: z.string().min(1, "Digite o ISBN do livro")
@@ -29,14 +29,17 @@ const schema = z.object({
 })
 
 
-export function useUpdateBook(data?: LivroInterface) {
-    const { updateOneBook } = useLivros()
+export function useUpdateBook(isbn: string) {
+    const { updateOneBook, findOneBook } = useLivros()
+
+    const { data, isLoading: isLoadingBook } = findOneBook(isbn);
 
     const {
         handleSubmit,
         formState: { errors },
         register,
-        control
+        control,
+        reset
     } = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
         defaultValues: {
@@ -50,6 +53,21 @@ export function useUpdateBook(data?: LivroInterface) {
             serie: data?.serie as "1º Ano" | "2º Ano" | "3º Ano" | undefined
         }
     })
+
+     useEffect(() => {
+    if (data) {
+      reset({
+        ano_publicacao: String(data.ano_publicacao),
+        autor: data.autor,
+        disciplina: data.disciplina,
+        edicao: data.edicao || "",
+        editora: data.editora,
+        isbn: data.isbn,
+        nome: data.nome,
+        serie: data.serie as "1º Ano" | "2º Ano" | "3º Ano",
+      });
+    }
+  }, [data, reset]);
 
     
     const [loading, setLoading] = useState(false)
@@ -86,6 +104,8 @@ export function useUpdateBook(data?: LivroInterface) {
         loading,
         register, 
         control,
-        navigate
+        navigate,
+        data,
+        isLoadingBook
     }
 }

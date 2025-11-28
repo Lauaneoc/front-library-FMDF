@@ -12,55 +12,21 @@ import { turmaService } from "../../../@shared/services/turmaService"
 import { TurmaInterface } from "../../../@shared/interfaces/turmaInterface"
 import { useQuery } from "@tanstack/react-query"
 import { queryClient } from "../../../@shared/api/queryClient"
+import { useCreateStudent } from "./useCreateStudent"
+import { Controller } from "react-hook-form"
+import { StudentProvider } from "../../../@shared/contexts/student/StudentProvider"
+import { TurmasProvider } from "../../../@shared/contexts/turmas/TurmasProvider"
 
-export default function NovoAlunoPage() {
+function Page() {
+  const {
+    onSubmit,
+    control,
+    isPendingCreateStudent,
+    turmas,
+    isPendingAllTurmas,
+    register
+  } = useCreateStudent()
   const navigate = useNavigate()
-  const [form, setForm] = useState({
-    matricula: "",
-    nome: "",
-    cpf: "",
-    data_nascimento: "",
-    id_turma: "",
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-
-  const { data: turmas = [] } = useQuery<TurmaInterface[]>({
-    queryKey: ["turmas"],
-    queryFn: () => turmaService.getAll(),
-  })
-
-  const handleChange = (field: string, value: string) => {
-    setForm({ ...form, [field]: value })
-    setError("")
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!form.matricula || !form.nome || !form.cpf || !form.data_nascimento || !form.id_turma) {
-      setError("Todos os campos são obrigatórios")
-      return
-    }
-
-    setLoading(true)
-    try {
-      await studentService.create({
-        matricula: form.matricula,
-        nome: form.nome,
-        cpf: form.cpf,
-        data_nascimento: form.data_nascimento,
-        id_turma: parseInt(form.id_turma),
-      })
-
-      await queryClient.invalidateQueries({ queryKey: ["alunos"] })
-      navigate("/alunos")
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Erro ao criar aluno")
-    } finally {
-      setLoading(false)
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -80,38 +46,26 @@ export default function NovoAlunoPage() {
       </div>
 
       <Card className="p-6 md:p-8 bg-card border border-border">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive">
-              {error}
-            </div>
-          )}
-
+        <form onSubmit={onSubmit} className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
             {/* Matrícula */}
             <div className="space-y-2">
-              <Label htmlFor="matricula" className="text-foreground font-medium">
-                Matrícula *
-              </Label>
               <Input
                 id="matricula"
+                label="Matrícula *"
+                {...register("matricula")}
                 placeholder="Ex: 202211190011"
-                value={form.matricula}
-                onChange={(e) => handleChange("matricula", e.target.value)}
                 className="bg-input border-border"
               />
             </div>
 
             {/* CPF */}
             <div className="space-y-2">
-              <Label htmlFor="cpf" className="text-foreground font-medium">
-                CPF *
-              </Label>
               <Input
                 id="cpf"
+                label="CPF *"
+                {...register("cpf")}
                 placeholder="Ex: 12345678901"
-                value={form.cpf}
-                onChange={(e) => handleChange("cpf", e.target.value.replace(/\D/g, "").slice(0, 11))}
                 maxLength={11}
                 className="bg-input border-border"
               />
@@ -119,49 +73,65 @@ export default function NovoAlunoPage() {
 
             {/* Nome */}
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="nome" className="text-foreground font-medium">
-                Nome Completo *
-              </Label>
               <Input
                 id="nome"
+                label="Nome Completo *"
+                {...register("nome")}
                 placeholder="Ex: Maria Silva"
-                value={form.nome}
-                onChange={(e) => handleChange("nome", e.target.value)}
                 className="bg-input border-border"
               />
             </div>
 
             {/* Data de Nascimento */}
             <div className="space-y-2">
-              <Label htmlFor="data_nascimento" className="text-foreground font-medium">
-                Data de Nascimento *
-              </Label>
               <Input
                 id="data_nascimento"
                 type="date"
-                value={form.data_nascimento}
-                onChange={(e) => handleChange("data_nascimento", e.target.value)}
+                {...register("data_nascimento")}
+                label="Data de Nascimento *"
                 className="bg-input border-border"
               />
             </div>
 
+
+
             {/* Turma */}
             <div className="space-y-2">
-              <Label htmlFor="turma" className="text-foreground font-medium">
-                Turma *
-              </Label>
-              <Select value={form.id_turma} onValueChange={(value) => handleChange("id_turma", value)}>
-                <SelectTrigger className="bg-input border-border">
-                  <SelectValue placeholder="Selecione uma turma" />
-                </SelectTrigger>
-                <SelectContent>
-                  {turmas.map((turma: TurmaInterface) => (
-                    <SelectItem key={turma.id} value={turma.id.toString()}>
-                      {turma.serie} - {turma.curso} ({turma.ano_letivo})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <Controller
+                  name="id_turma"
+                  control={control}
+                  rules={{ required: "Série é obrigatória" }}
+                  render={({ field, fieldState }) => (
+                    <div className="space-y-2">
+                      <Label htmlFor="serie" className="text-foreground font-medium">
+                        Turma *
+                      </Label>
+
+                      <Select
+                        value={String(field.value)}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="bg-input border-border" id="serie">
+                           <SelectValue placeholder="Selecione uma turma" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {isPendingAllTurmas && (
+                            <div>Carregando turmas...</div>
+                          )}
+                          {!isPendingAllTurmas && turmas?.length && turmas.map((turma: TurmaInterface) => (
+                            <SelectItem key={turma.id} value={turma.id.toString()}>
+                              {turma.serie} - {turma.curso} ({turma.ano_letivo})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      {fieldState.error && (
+                        <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                      )}
+                    </div>
+                  )}
+                />
             </div>
           </div>
 
@@ -169,10 +139,10 @@ export default function NovoAlunoPage() {
           <div className="flex gap-3 pt-4">
             <Button
               type="submit"
-              disabled={loading}
+              disabled={isPendingCreateStudent}
               className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
             >
-              {loading ? "Criando..." : "Criar Aluno"}
+              {isPendingCreateStudent ? "Criando..." : "Criar Aluno"}
             </Button>
             <Button
               type="button"
@@ -186,5 +156,15 @@ export default function NovoAlunoPage() {
         </form>
       </Card>
     </div>
+  )
+}
+
+export default function NovoAlunoPage() {
+  return (
+    <StudentProvider>
+      <TurmasProvider>
+        <Page />
+      </TurmasProvider>
+    </StudentProvider>
   )
 }

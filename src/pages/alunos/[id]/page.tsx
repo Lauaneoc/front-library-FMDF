@@ -1,22 +1,13 @@
-import { ArrowLeft, Edit, BookOpen, Calendar, User } from "lucide-react"
+import { ArrowLeft, Edit, BookOpen, User } from "lucide-react"
 import { StatusBadge } from "../../../components/status-badge"
 import { Button } from "../../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
 import { Label } from "../../../components/ui/label"
-import { Badge } from "../../../components/ui/badge"
 import { TableSimple } from "../../../components/table-simple"
-
-// Mock data
-const mockStudent = {
-  matricula: "2024001",
-  nome: "Ana Silva Santos",
-  cpf: "123.456.789-00",
-  nascimento: "15/03/2007",
-  turma: "1º Ano A - Ensino Médio",
-  totalLocacoes: 12,
-  atrasos: 1,
-  status: "Ativo",
-}
+import { useParams } from "react-router-dom"
+import { StudentProvider } from "../../../@shared/contexts/student/StudentProvider"
+import { TurmasProvider } from "../../../@shared/contexts/turmas/TurmasProvider"
+import { useViewStudent } from "./useViewStudent"
 
 const mockRentals = [
   {
@@ -62,7 +53,10 @@ const rentalColumns = [
   { key: "devolucao", label: "Devolução" },
 ]
 
-export default function AlunoDetalhePage() {
+function Page() {
+  const { matricula } = useParams()
+  const { data, isLoadingStudent } = useViewStudent(matricula ?? "")
+
   const renderRentalActions = (row: any) => (
     <div className="flex items-center gap-2">
         <Button variant="ghost" size="sm">
@@ -70,6 +64,12 @@ export default function AlunoDetalhePage() {
         </Button>
     </div>
   )
+
+  if(isLoadingStudent) {
+    return (
+      <div>carregando...</div>
+    )
+  }
 
   return (
     <div className="flex h-screen bg-background">
@@ -81,8 +81,8 @@ export default function AlunoDetalhePage() {
                 Voltar
               </Button>
             <div className="flex-1">
-              <h2 className="text-3xl font-bold text-foreground">{mockStudent.nome}</h2>
-              <p className="text-muted-foreground">Matrícula: {mockStudent.matricula}</p>
+              {/* <h2 className="text-3xl font-bold text-foreground">{data.nome}</h2> */}
+              <p className="text-muted-foreground">Matrícula: {data.matricula}</p>
             </div>
               <Button>
                 <Edit className="h-4 w-4 mr-2" />
@@ -103,27 +103,21 @@ export default function AlunoDetalhePage() {
                 <CardContent className="space-y-4">
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">CPF</Label>
-                    <p className="text-foreground">{mockStudent.cpf}</p>
+                    <p className="text-foreground">{data.cpf}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Data de Nascimento</Label>
-                    <p className="text-foreground">{mockStudent.nascimento}</p>
+                    <p className="text-foreground">{data.data_nascimento}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Turma</Label>
-                    <p className="text-foreground">{mockStudent.turma}</p>
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Status</Label>
-                    <Badge variant="default" className="bg-primary text-primary-foreground">
-                      {mockStudent.status}
-                    </Badge>
+                    <p className="text-foreground">{data.id_turma}</p>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Stats */}
-              <Card className="mt-6">
+              {/* <Card className="mt-6">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calendar className="h-5 w-5" />
@@ -133,14 +127,14 @@ export default function AlunoDetalhePage() {
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Total de Locações</span>
-                    <span className="font-semibold text-foreground">{mockStudent.totalLocacoes}</span>
+                    <span className="font-semibold text-foreground">{data.totalLocacoes}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Atrasos</span>
-                    <span className="font-semibold text-destructive">{mockStudent.atrasos}</span>
+                    <span className="font-semibold text-destructive">{data.atrasos}</span>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
             </div>
 
             {/* Rental History */}
@@ -173,5 +167,15 @@ export default function AlunoDetalhePage() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function AlunoDetalhePage() {
+  return (
+    <StudentProvider>
+      <TurmasProvider>
+        <Page />
+      </TurmasProvider>
+    </StudentProvider>
   )
 }

@@ -11,6 +11,8 @@ interface LivrosContextData {
   updateOneBook: any
   deleteOneBook: any;
   isPendingDeleteBook: any
+  isPendingCreateBook: any
+  findOneBook: any
 }
 
 export const LivrosContext = createContext<LivrosContextData | null>(null);
@@ -23,7 +25,16 @@ export function LivrosProvider({ children }: { children: ReactNode }) {
     queryFn: livroService.getAll,
   });
 
-  const createOneBook = useMutation({
+
+  function findOneBook(isbn: string) {
+      return useQuery({
+        queryKey: ["livro", isbn],
+        queryFn: () => livroService.getByIsbn(isbn),
+        enabled: !!isbn,
+      });
+  }
+
+   const {mutateAsync: createOneBook, isPending: isPendingCreateBook} = useMutation({
     mutationFn: (
       value: LivroInterface
     ) => livroService.create(value),
@@ -67,8 +78,8 @@ export function LivrosProvider({ children }: { children: ReactNode }) {
 
   const {mutateAsync: deleteOneBook, isPending: isPendingDeleteBook} = useMutation({
     mutationFn: (
-      value: LivroInterface
-    ) => livroService.remove(value.isbn),
+      value: string
+    ) => livroService.remove(value),
     onSuccess: () => {
       toast({
         title: "Sucesso",
@@ -92,7 +103,9 @@ export function LivrosProvider({ children }: { children: ReactNode }) {
         livros,
         isLoading,
         createOneBook,
+        isPendingCreateBook,
         updateOneBook,
+        findOneBook,
         deleteOneBook,
         isPendingDeleteBook
       }}

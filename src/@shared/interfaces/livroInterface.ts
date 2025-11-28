@@ -7,4 +7,6 @@ export interface LivroInterface {
   serie: string;
   ano_publicacao: number;
   edicao?: string;
+  total_exemplares?: number
+  exemplares_disponiveis?: number
 }

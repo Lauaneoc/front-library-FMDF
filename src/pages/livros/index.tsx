@@ -63,7 +63,6 @@ const filters = [
 ]
 
 function InnerLivrosPage() {
-  const navigate = useNavigate()
   const { livros, deleteOneBook, isPendingDeleteBook } = useLivros()
   const { exemplares } = useExemplares()
   const [deleteIsbn, setDeleteIsbn] = useState<string | null>(null)
@@ -75,7 +74,8 @@ function InnerLivrosPage() {
 
   const handleConfirmDelete = async () => {
     if (!deleteIsbn) return
-    await deleteOneBook.mutateAsync(deleteIsbn)
+    console.log("handle confirm delete")
+    await deleteOneBook(deleteIsbn)
     setDeleteIsbn(null)
   }
 
@@ -92,7 +92,6 @@ function InnerLivrosPage() {
 
   const data = (livros as LivroInterface[] | null)?.map((l) => {
     const c = counts.get(l.isbn) ?? { total: 0 }
-    const exemplaresText = `${c.total}`
     return {
       isbn: l.isbn,
       nome: l.nome,
@@ -100,9 +99,8 @@ function InnerLivrosPage() {
       serie: l.serie,
       exemplares: (
         <div className="flex items-center justify-center gap-2">
-          <span>{exemplaresText}</span>
-          <Badge variant={c.total > 0 ? "default" : "destructive"} className={c.total > 0 ? "bg-primary text-primary-foreground" : ""}>
-            {c.total > 0 ? "Tem exemplares" : "Sem exemplares"}
+          <Badge variant={"default"} className={c.total > 0 ? "bg-primary text-primary-foreground" : ""}>
+           {l.exemplares_disponiveis}/{l.total_exemplares}
           </Badge>
         </div>
       ),
@@ -116,9 +114,11 @@ function InnerLivrosPage() {
           <Eye className="h-4 w-4" />
         </Button>
       </Link>
-      <Button variant="ghost" size="sm" onClick={() => navigate(`/livros/${row.isbn}/editar`, { state: { livro: row } })}>
-        <Edit className="h-4 w-4" />
-      </Button>
+      <Link to={`/livros/${row.isbn}/editar`}>
+        <Button variant="ghost" size="sm">
+          <Edit className="h-4 w-4" />
+        </Button>
+      </Link>
       <Button
         variant="ghost"
         size="sm"
@@ -203,7 +203,7 @@ function InnerLivrosPage() {
       </main>
 
       <AlertDialog open={deleteIsbn !== null} onOpenChange={() => setDeleteIsbn(null)}>
-        <AlertDialogContent className="bg-[#242424] border border-border">
+        <AlertDialogContent className="bg-white border border-border text-foreground">
           <AlertDialogTitle>Remover Livro</AlertDialogTitle>
           <AlertDialogDescription>
             Tem certeza que deseja remover este livro? Esta ação não pode ser desfeita.
@@ -215,7 +215,7 @@ function InnerLivrosPage() {
             <AlertDialogAction
               onClick={handleConfirmDelete}
               disabled={isPendingDeleteBook}
-              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+              className="bg-destructive border-border hover:bg-destructive/90 text-destructive-foreground"
             >
               {isPendingDeleteBook ? "Removendo..." : "Remover"}
             </AlertDialogAction>

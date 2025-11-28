@@ -1,6 +1,5 @@
-"use client"
 import { Plus, Edit, Eye, Trash2 } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "../../components/ui/button"
 import { FiltersDrawer } from "../../components/filters-drawer"
 import { TableSimple } from "../../components/table-simple"
@@ -65,15 +64,9 @@ const filters = [
 function Page() {
 
   const navigate = useNavigate()
-  const { students } = useStudent()
+  const { students, deleteOneStudent, isPendingDeleteStudent } = useStudent()
 
-  if(students == null) {
-    return 'oi'
-  }
-
-  const { toast } = useToast()
   const [deleteMatricula, setDeleteMatricula] = useState<string | null>(null)
-  const [deleting, setDeleting] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
 
@@ -84,29 +77,23 @@ function Page() {
 
   const handleConfirmDelete = async () => {
     if (!deleteMatricula) return
-    setDeleting(true)
-    try {
-      await studentService.remove(deleteMatricula)
-      await queryClient.invalidateQueries({ queryKey: ["students"] })
-      toast({ title: "Aluno removido", description: "Aluno removido com sucesso" })
-      setConfirmOpen(false)
-      setDeleteMatricula(null)
-    } catch (err) {
-      console.error(err)
-      toast({ title: "Erro", description: "Erro ao remover aluno" })
-    } finally {
-      setDeleting(false)
-    }
+    await deleteOneStudent(deleteMatricula)
+    setDeleteMatricula(null)
+    setConfirmOpen(false)
   }
 
   const renderActions = (row: any) => (
     <div className="flex items-center gap-2">
-        <Button variant="ghost" size="sm">
-          <Eye className="h-4 w-4" />
-        </Button>
-        <Button variant="ghost" size="sm" onClick={() => navigate(`/alunos/${row.matricula}/editar`)}>
-          <Edit className="h-4 w-4" />
-        </Button>
+        <Link to={`/alunos/${row.matricula}`}>
+          <Button variant="ghost" size="sm">
+            <Eye className="h-4 w-4" />
+          </Button>
+        </Link>
+        <Link to={`/alunos/${row.matricula}/editar`}>
+          <Button variant="ghost" size="sm">
+            <Edit className="h-4 w-4" />
+          </Button>
+        </Link>
         <Button variant="ghost" size="sm" onClick={() => handleDeleteClick(row.matricula)}>
           <Trash2 className="h-4 w-4" />
         </Button>
@@ -156,7 +143,7 @@ function Page() {
           />
         </div>
         <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-          <AlertDialogContent>
+          <AlertDialogContent className="bg-white border border-border text-foreground">
             <AlertDialogHeader>
               <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
               <AlertDialogDescription>
@@ -165,8 +152,8 @@ function Page() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleConfirmDelete} disabled={deleting}>
-                {deleting ? 'Apagando...' : 'Excluir'}
+              <AlertDialogAction onClick={handleConfirmDelete} disabled={isPendingDeleteStudent}>
+                {isPendingDeleteStudent ? 'Apagando...' : 'Excluir'}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

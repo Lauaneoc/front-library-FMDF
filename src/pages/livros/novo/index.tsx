@@ -11,7 +11,7 @@ import { LivrosProvider } from "../../../@shared/contexts/livros/LivrosProvider"
 import { Controller } from "react-hook-form"
 
 function Page() {
-  const { onSubmit, register, control } = useCreateBook()
+  const { onSubmit, register, control, isPendingCreateBook} = useCreateBook()
   const navigate = useNavigate()
 
   return (
@@ -157,7 +157,7 @@ function Page() {
                 type="submit"
                 className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
               >
-                {true ? "Criando..." : "Criar Livro"}
+                {isPendingCreateBook ? "Criando..." : "Criar Livro"}
               </Button>
               <Button
                 type="button"

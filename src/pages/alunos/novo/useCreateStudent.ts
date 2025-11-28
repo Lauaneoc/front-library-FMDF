@@ -1,0 +1,75 @@
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
+import { useStudent } from "../../../@shared/contexts/student/useStudent";
+import { useTurmas } from "../../../@shared/contexts/turmas/useTurmas";
+
+const schema = z.object({
+  matricula: z.string()
+    .min(1, "Matrícula é obrigatória")
+    .max(10, "Matrícula deve ter no máximo 10 caracteres"),
+
+  nome: z.string()
+    .min(1, "Nome é obrigatório")
+    .max(100, "Nome deve ter no máximo 100 caracteres"),
+
+  cpf: z.string()
+    .min(11, "CPF deve ter 11 dígitos")
+    .max(14, "CPF inválido")
+    .regex(/^\d{11}$/, "CPF deve conter apenas números"),
+    
+  data_nascimento: z.string()
+    .min(1, "Data de nascimento é obrigatória")
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de data inválido. Use YYYY-MM-DD")
+    .refine((date) => {
+      const parsedDate = new Date(date);
+      const today = new Date();
+      return !isNaN(parsedDate.getTime()) && parsedDate <= today;
+    }, "Data deve ser válida e não futura"),
+  id_turma: z.string().min(1, "Selecione a turma"),
+})
+
+export function useCreateStudent() {
+    const { createOneStudent, isPendingCreateStudent } = useStudent()
+    const { turmas, isLoading: isPendingAllTurmas } = useTurmas()
+
+    const {
+        handleSubmit,
+        formState: { errors },
+        register,
+        control,
+    } = useForm<z.infer<typeof schema>>({
+        resolver: zodResolver(schema)
+    })
+
+    const navigate = useNavigate()
+
+    const onSubmit = handleSubmit(async (data) => {
+        try {
+        const payload = {
+            matricula: data.matricula,
+            nome: data.nome,
+            cpf: data.cpf,
+            data_nascimento: new Date(data.data_nascimento).toISOString().split('T')[0],
+            id_turma: data.id_turma,
+        }
+
+        await createOneStudent(payload);
+        
+        navigate("/alunos")
+        } catch (err: any) {
+            console.error(err)
+        }
+    })
+
+    return {
+        onSubmit,
+        errors,
+        register, 
+        control,
+        isPendingCreateStudent,
+        turmas,
+        isPendingAllTurmas
+    }
+}
