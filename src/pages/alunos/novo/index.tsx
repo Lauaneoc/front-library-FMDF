@@ -24,7 +24,8 @@ function Page() {
     isPendingCreateStudent,
     turmas,
     isPendingAllTurmas,
-    register
+    register,
+    errors,
   } = useCreateStudent()
   const navigate = useNavigate()
 
@@ -56,6 +57,7 @@ function Page() {
                 {...register("matricula")}
                 placeholder="Ex: 202211190011"
                 className="bg-input border-border"
+                error={errors.matricula?.message}
               />
             </div>
 
@@ -68,6 +70,7 @@ function Page() {
                 placeholder="Ex: 12345678901"
                 maxLength={11}
                 className="bg-input border-border"
+                error={errors.cpf?.message}
               />
             </div>
 
@@ -79,6 +82,7 @@ function Page() {
                 {...register("nome")}
                 placeholder="Ex: Maria Silva"
                 className="bg-input border-border"
+                error={errors.nome?.message}
               />
             </div>
 
@@ -90,6 +94,7 @@ function Page() {
                 {...register("data_nascimento")}
                 label="Data de Nascimento *"
                 className="bg-input border-border"
+                error={errors.data_nascimento?.message}
               />
             </div>
 
