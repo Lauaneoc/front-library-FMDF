@@ -25,6 +25,7 @@ function Page() {
     control,
     isLoadingExemplar,
     isPendingUpdateExemplar,
+    errors,
   } = useUpdateExemplar(id ?? "");
   const navigate = useNavigate();
 
@@ -62,6 +63,7 @@ function Page() {
                 label="ISBN *"
                 {...register("isbn_livro")}
                 className="bg-input border-border"
+                error={errors.isbn_livro?.message}
               />
             </div>
 
@@ -117,6 +119,7 @@ function Page() {
                 label="Ano de Aquisição *"
                 {...register("ano_aquisicao")}
                 className="bg-input border-border"
+                error={errors.ano_aquisicao?.message}
               />
             </div>
 
@@ -125,9 +128,10 @@ function Page() {
               <Input
                 id="ano_descarte"
                 placeholder={(new Date().getFullYear() + 2).toString()}
-                label="Ano de Descarte"
+                label="Ano de Descarte *"
                 {...register("ano_descarte")}
                 className="bg-input border-border"
+                error={errors.ano_descarte?.message}
               />
             </div>
           </div>

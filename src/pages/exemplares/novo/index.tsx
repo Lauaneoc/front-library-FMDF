@@ -17,7 +17,7 @@ import { ExemplaresProvider } from "../../../@shared/contexts/exemplares/Exempla
 import { Controller } from "react-hook-form";
 
 function Page() {
-  const { onSubmit, register, control, isPendingCreateExemplar } =
+  const { onSubmit, register, control, isPendingCreateExemplar, errors} =
     useCreateExemplar();
   const navigate = useNavigate();
 
@@ -53,6 +53,7 @@ function Page() {
                 label="ISBN *"
                 {...register("isbn_livro")}
                 className="bg-input border-border"
+                error={errors.isbn_livro?.message}
               />
             </div>
 
@@ -104,6 +105,7 @@ function Page() {
                 label="Ano de Aquisição *"
                 {...register("ano_aquisicao")}
                 className="bg-input border-border"
+                error={errors.ano_aquisicao?.message}
               />
             </div>
 
@@ -115,6 +117,7 @@ function Page() {
                 label="Ano de Descarte"
                 {...register("ano_descarte")}
                 className="bg-input border-border"
+                error={errors.ano_descarte?.message}
               />
             </div>
           </div>

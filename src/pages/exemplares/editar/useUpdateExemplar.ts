@@ -5,20 +5,31 @@ import { useEffect, useState } from "react";
 import { useExemplares } from "../../../@shared/contexts/exemplares/useExemplares";
 import { useNavigate } from "react-router-dom";
 
-const schema = z.object({
-  isbn_livro: z
-    .string()
-    .min(1, "Digite o ISBN do livro")
-    .max(13, "ISBN deve ter no máximo 13 caracteres"),
+const schema = z
+  .object({
+    isbn_livro: z
+      .string()
+      .min(1, "O ISBN é obrigatório.")
+      .max(13, "ISBN deve ter no máximo 13 caracteres."),
 
-  ano_aquisicao: z.string().min(1, "Digite o ano de aquisição"),
+    ano_aquisicao: z
+      .string()
+      .min(1, "Ano de aquisição obrigatório.")
+      .regex(/^\d{4}$/, "Ano de aquisição inválido."),
 
-  ano_descarte: z.string().min(1, "Digite o ano de descarte"),
+    ano_descarte: z
+      .string()
+      .min(1, "Ano de descarte obrigatório.")
+      .regex(/^\d{4}$/, "Ano de descarte inválido."),
 
-  estado: z.enum(["Novo", "Regular", "Danificado", "Perdido"], {
-    message: "Estado inválido",
-  }),
-});
+    estado: z.enum(["Novo", "Regular", "Danificado", "Perdido"], {
+      message: "Estado obrigatório.",
+    }),
+  })
+  .refine((data) => Number(data.ano_descarte) > Number(data.ano_aquisicao), {
+    message: "O ano de descarte deve ser após ano de aquisição.",
+    path: ["ano_descarte"],
+  });
 
 export function useUpdateExemplar(id: string) {
   const { findOneExemplar, isPendingUpdateExemplar, updateOneExemplar } =
