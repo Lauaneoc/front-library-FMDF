@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../config/api";
+import { StudentInterface } from "../interfaces/studentInterface";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -11,13 +12,7 @@ export const studentService = {
     console.log({data})
     return data;
   },
-  create: async (payload: {
-    matricula: string;
-    nome: string;
-    cpf: string;
-    data_nascimento: string;
-    id_turma: number;
-  }) => {
+  create: async (payload: StudentInterface) => {
     const { data } = await api.post("/alunos/novo", payload);
     return data;
   },
@@ -29,13 +24,7 @@ export const studentService = {
     const { data } = await api.get(`/alunos/buscar/${matricula}`);
     return data;
   },
-  update: async (matricula: string, payload: {
-    matricula: string;
-    nome: string;
-    cpf: string;
-    data_nascimento: string;
-    id_turma: number;
-  }) => {
+  update: async (matricula: string, payload: StudentInterface) => {
     const { data } = await api.put(`/alunos/atualizar/${matricula}`, payload);
     return data;
   },
