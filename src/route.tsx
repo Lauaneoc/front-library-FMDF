@@ -16,6 +16,7 @@ import ConfiguracoesPage from "./pages/configuracoes";
 import AlunosPage from "./pages/alunos/page";
 import NovoAlunoPage from "./pages/alunos/novo";
 import EditAlunoPage from "./pages/alunos/[matricula]/editar";
+import AlunoDetalhePage from "./pages/alunos/[id]/page";
 
 export function RoutesPage() {
   return (
@@ -32,6 +33,7 @@ export function RoutesPage() {
             {/* Alunos */}
             <Route path="alunos" element={<AlunosPage />} />
             <Route path="alunos/novo" element={<NovoAlunoPage />} />
+            <Route path="alunos/:matricula" element={<AlunoDetalhePage />} />
             <Route path="alunos/:matricula/editar" element={<EditAlunoPage />} />
             
             {/* Turmas */}
@@ -41,7 +43,7 @@ export function RoutesPage() {
             {/* Livros */}
             <Route path="livros" element={<LivrosPage />} />
             <Route path="livros/novo" element={<NovoLivroPage />} />
-            <Route path="livros/isbn" element={<LivroIsbnPage />} />
+            <Route path="livros/:isbn" element={<LivroIsbnPage />} />
             <Route path="livros/:isbn/editar" element={<EditarLivroPage />} />
             
             {/* Exemplares */}
