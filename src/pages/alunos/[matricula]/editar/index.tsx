@@ -77,8 +77,9 @@ function Page() {
                     </Label>
 
                     <Select
-                      value={field.value ?? ""}            // 👈 garante string
-                      onValueChange={field.onChange}       // 👈 atualiza o form
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      key={field.value ?? "empty-field"}
                     >
                       <SelectTrigger className="bg-input border-border" id="id_turma">
                         <SelectValue placeholder="Selecione uma turma" />

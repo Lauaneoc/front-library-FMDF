@@ -50,14 +50,13 @@ export function useUpdateMatricula(matricula: string) {
 
     
     useEffect(() => {
-        if (data && turmas?.length) {
-        const turmaSelecionada = turmas.find(t => t.id === data.id_turma);
+      if (data && turmas?.length) {
       reset({
             matricula: data.matricula,
             nome: data.nome,
             cpf: data.cpf,
-            data_nascimento: data.data_nascimento,
-            id_turma: String(turmaSelecionada),
+            data_nascimento: data.data_nascimento.slice(0, 10),
+            id_turma: String(data.id_turma),
       });
     }
   }, [data, reset, turmas]);
