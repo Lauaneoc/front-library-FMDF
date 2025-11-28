@@ -51,7 +51,7 @@ export function useCreateStudent() {
             matricula: data.matricula,
             nome: data.nome,
             cpf: data.cpf,
-            data_nascimento: new Date(data.data_nascimento).toISOString().split('T')[0],
+            data_nascimento: data.data_nascimento,
             id_turma: data.id_turma,
         }
 

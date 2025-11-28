@@ -107,7 +107,7 @@ function Page() {
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Data de Nascimento</Label>
-                    <p className="text-foreground">{data.data_nascimento}</p>
+                    <p className="text-foreground">{new Date(data.data_nascimento).toLocaleDateString("pt-br")}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Turma</Label>
@@ -149,10 +149,7 @@ function Page() {
                 <CardContent>
                   <TableSimple
                     columns={rentalColumns}
-                    data={mockRentals.map((rental) => ({
-                      ...rental,
-                      status: <StatusBadge status={rental.status as any} />,
-                    }))}
+                    data={mockRentals}
                     actions={renderRentalActions}
                     pagination={{
                       currentPage: 1,

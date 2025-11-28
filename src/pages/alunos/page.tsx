@@ -28,13 +28,10 @@ const columns = [
   {
     key: "data_nascimento",
     label: "Nascimento",
-    render: (row: StudentInterface) =>
-      new Date(row.data_nascimento).toLocaleDateString("pt-BR"),
+    render: (value: string) => new Date(value).toLocaleDateString("pt-BR"),
   },
   { key: "id_turma", label: "ID da Turma", className: "text-center" },
 ];
-
-
 
 const filters = [
   { key: "nome", label: "Nome", type: "text" as const },
