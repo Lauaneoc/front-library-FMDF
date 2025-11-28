@@ -8,6 +8,9 @@ import RelatoriosPage from "./pages/relatorios";
 import LocacoesPage from "./pages/locacoes";
 import LocacaoDetalhesPage from "./pages/locacoes/id";
 import ExemplaresPage from "./pages/exemplares";
+import ExemplarPage from "./pages/exemplares/id"
+import NovoExemplarPage from "./pages/exemplares/novo"
+import EditarExemplarPage from "./pages/exemplares/editar"
 import LivrosPage from "./pages/livros";
 import NovoLivroPage from "./pages/livros/novo";
 import LivroIsbnPage from "./pages/livros/isbn";
@@ -48,6 +51,9 @@ export function RoutesPage() {
             
             {/* Exemplares */}
             <Route path="exemplares" element={<ExemplaresPage />} />
+            <Route path="exemplares/novo" element={<NovoExemplarPage />} />
+            <Route path="exemplares/:id" element={<ExemplarPage />} />
+            <Route path="exemplares/:id/editar" element={<EditarExemplarPage />} />
             
             {/* Locações */}
             <Route path="locacoes" element={<LocacoesPage />} />
