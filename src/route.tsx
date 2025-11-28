@@ -8,9 +8,9 @@ import RelatoriosPage from "./pages/relatorios";
 import LocacoesPage from "./pages/locacoes";
 import LocacaoDetalhesPage from "./pages/locacoes/id";
 import ExemplaresPage from "./pages/exemplares";
-import ExemplarPage from "./pages/exemplares/id"
-import NovoExemplarPage from "./pages/exemplares/novo"
-import EditarExemplarPage from "./pages/exemplares/editar"
+import ExemplarPage from "./pages/exemplares/id";
+import NovoExemplarPage from "./pages/exemplares/novo";
+import EditarExemplarPage from "./pages/exemplares/editar";
 import LivrosPage from "./pages/livros";
 import NovoLivroPage from "./pages/livros/novo";
 import LivroIsbnPage from "./pages/livros/isbn";
@@ -24,48 +24,51 @@ import AlunoDetalhePage from "./pages/alunos/[id]/page";
 export function RoutesPage() {
   return (
     <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<DefaultLayout />}>
-            {/* Rota raiz redireciona para o dashboard */}
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            
-            {/* Dashboard */}
-            <Route path="dashboard" element={<DashboardPage />} />
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<DefaultLayout />}>
+          {/* Rota raiz redireciona para o dashboard */}
+          <Route index element={<Navigate to="/dashboard" replace />} />
 
-            {/* Alunos */}
-            <Route path="alunos" element={<AlunosPage />} />
-            <Route path="alunos/novo" element={<NovoAlunoPage />} />
-            <Route path="alunos/:matricula" element={<AlunoDetalhePage />} />
-            <Route path="alunos/:matricula/editar" element={<EditAlunoPage />} />
-            
-            {/* Turmas */}
-            <Route path="turmas" element={<TurmasPage />} />
-            <Route path="turmas/nova" element={<NovaTurmaPage />} />
-            
-            {/* Livros */}
-            <Route path="livros" element={<LivrosPage />} />
-            <Route path="livros/novo" element={<NovoLivroPage />} />
-            <Route path="livros/:isbn" element={<LivroIsbnPage />} />
-            <Route path="livros/:isbn/editar" element={<EditarLivroPage />} />
-            
-            {/* Exemplares */}
-            <Route path="exemplares" element={<ExemplaresPage />} />
-            <Route path="exemplares/novo" element={<NovoExemplarPage />} />
-            <Route path="exemplares/:id" element={<ExemplarPage />} />
-            <Route path="exemplares/:id/editar" element={<EditarExemplarPage />} />
-            
-            {/* Locações */}
-            <Route path="locacoes" element={<LocacoesPage />} />
-            <Route path="locacoes/:id" element={<LocacaoDetalhesPage />} />
-            
-            {/* Relatórios */}
-            <Route path="relatorios" element={<RelatoriosPage />} />
-            
-            {/* Configurações */}
-            <Route path="configuracoes" element={<ConfiguracoesPage />} />
-          </Route>
-        </Routes>
+          {/* Dashboard */}
+          <Route path="dashboard" element={<DashboardPage />} />
+
+          {/* Alunos */}
+          <Route path="alunos" element={<AlunosPage />} />
+          <Route path="alunos/novo" element={<NovoAlunoPage />} />
+          <Route path="alunos/:matricula" element={<AlunoDetalhePage />} />
+          <Route path="alunos/:matricula/editar" element={<EditAlunoPage />} />
+
+          {/* Turmas */}
+          <Route path="turmas" element={<TurmasPage />} />
+          <Route path="turmas/nova" element={<NovaTurmaPage />} />
+
+          {/* Livros */}
+          <Route path="livros" element={<LivrosPage />} />
+          <Route path="livros/novo" element={<NovoLivroPage />} />
+          <Route path="livros/:isbn" element={<LivroIsbnPage />} />
+          <Route path="livros/:isbn/editar" element={<EditarLivroPage />} />
+
+          {/* Exemplares */}
+          <Route path="exemplares" element={<ExemplaresPage />} />
+          <Route path="exemplares/novo" element={<NovoExemplarPage />} />
+          <Route path="exemplares/:id" element={<ExemplarPage />} />
+          <Route
+            path="exemplares/:id/editar"
+            element={<EditarExemplarPage />}
+          />
+
+          {/* Locações */}
+          <Route path="locacoes" element={<LocacoesPage />} />
+          <Route path="locacoes/:id" element={<LocacaoDetalhesPage />} />
+
+          {/* Relatórios */}
+          <Route path="relatorios" element={<RelatoriosPage />} />
+
+          {/* Configurações */}
+          <Route path="configuracoes" element={<ConfiguracoesPage />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }

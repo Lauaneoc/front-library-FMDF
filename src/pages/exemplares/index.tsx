@@ -31,7 +31,7 @@ const columns = [
     key: "estado",
     label: "Estado",
   },
-  { key: "anos", label: "Anos" },
+  { key: "bienio", label: "Biênio" },
   {
     key: "disponibilidade",
     label: "Disponibilidade",
@@ -114,8 +114,8 @@ function InnerExemplaresPage() {
       id: e.id,
       livro: e.nome_livro ?? e.isbn_livro,
       estado: <EstadoBadge estado={e.estado as any} />,
-      anos: `${e.ano_aquisicao} - ${e.ano_descarte}`,
-      disponibilidade: <Badge variant="secondary">—</Badge>,
+      bienio: `${e.ano_aquisicao} - ${e.ano_descarte}`,
+      disponibilidade: <Badge variant="secondary">{e.disponibilidade}</Badge>,
     })) ?? [];
 
   return (

@@ -27,7 +27,7 @@ function Page() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate("/livros")}
+          onClick={() => navigate("/exemplares")}
           className="hover:bg-muted"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -125,12 +125,12 @@ function Page() {
               type="submit"
               className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
             >
-              {isPendingCreateExemplar ? "Criando..." : "Criar Livro"}
+              {isPendingCreateExemplar ? "Criando..." : "Criar Exemplar"}
             </Button>
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate("/livros")}
+              onClick={() => navigate("/exemplares")}
               className="border-border hover:bg-muted"
             >
               Cancelar

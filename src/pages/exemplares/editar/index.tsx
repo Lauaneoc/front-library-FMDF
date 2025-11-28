@@ -74,16 +74,20 @@ function Page() {
                 render={({ field, fieldState }) => (
                   <div className="space-y-2">
                     <Label
-                      htmlFor="serie"
+                      htmlFor="estado"
                       className="text-foreground font-medium"
                     >
                       Estado *
                     </Label>
 
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      key={field.value ?? "estado-empty"}
+                    >
                       <SelectTrigger
                         className="bg-input border-border"
-                        id="serie"
+                        id="estado"
                       >
                         <SelectValue placeholder="Selecione o estado" />
                       </SelectTrigger>

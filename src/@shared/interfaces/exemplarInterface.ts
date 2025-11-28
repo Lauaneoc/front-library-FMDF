@@ -6,4 +6,5 @@ export interface ExemplarInterface {
   isbn_livro: string;
   nome_livro?: string;
   autor?: string;
+  disponibilidade?: string;
 }

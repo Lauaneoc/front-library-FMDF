@@ -40,8 +40,8 @@ export function useUpdateExemplar(id: string) {
     if (data) {
       reset({
         isbn_livro: data?.isbn_livro,
-        ano_aquisicao: data?.ano_aquisicao,
-        ano_descarte: data?.ano_descarte,
+        ano_aquisicao: data?.ano_aquisicao?.toString(),
+        ano_descarte: data?.ano_descarte?.toString(),
         estado: data?.estado,
       });
     }

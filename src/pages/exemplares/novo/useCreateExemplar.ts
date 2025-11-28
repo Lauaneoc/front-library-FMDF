@@ -6,8 +6,6 @@ import { useExemplares } from "../../../@shared/contexts/exemplares/useExemplare
 import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
-  id: z.string().min(1),
-
   isbn_livro: z
     .string()
     .min(1, "Digite o ISBN do livro")
@@ -32,6 +30,7 @@ export function useCreateExemplar() {
     control,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
+    defaultValues: { estado: "Novo" },
   });
 
   const [loading, setLoading] = useState(false);
