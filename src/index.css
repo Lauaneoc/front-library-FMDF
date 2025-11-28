@@ -282,8 +282,8 @@ button:focus-visible {
   color: rgb(var(--toast-foreground));
   border: 1px solid rgb(var(--toast-border));
   box-shadow: var(--shadow-medium);
-  min-width: 300px;
-  max-width: 420px;
+  min-width: 100px;
+  max-width: 100px;
 }
 
 /* Componentes específicos da biblioteca */
