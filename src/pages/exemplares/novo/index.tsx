@@ -114,7 +114,7 @@ function Page() {
               <Input
                 id="ano_descarte"
                 placeholder={(new Date().getFullYear() + 2).toString()}
-                label="Ano de Descarte"
+                label="Ano de Descarte *"
                 {...register("ano_descarte")}
                 className="bg-input border-border"
                 error={errors.ano_descarte?.message}
