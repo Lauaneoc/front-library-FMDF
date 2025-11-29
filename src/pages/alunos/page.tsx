@@ -20,11 +20,12 @@ import {
   AlertDialogCancel,
 } from "../../components/ui/alert-dialog"
 import { useState } from "react"
+import { maskCPF } from "../../utils/masks"
 
 const columns = [
   { key: "matricula", label: "Matrícula" },
   { key: "nome", label: "Nome" },
-  { key: "cpf", label: "CPF" },
+  { key: "cpf", label: "CPF", render: (value: string) => maskCPF(value) },
   {
     key: "data_nascimento",
     label: "Nascimento",

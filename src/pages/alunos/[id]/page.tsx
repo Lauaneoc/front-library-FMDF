@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom"
 import { StudentProvider } from "../../../@shared/contexts/student/StudentProvider"
 import { TurmasProvider } from "../../../@shared/contexts/turmas/TurmasProvider"
 import { useViewStudent } from "./useViewStudent"
+import { maskCPF } from "../../../utils/masks"
 
 const mockRentals = [
   {
@@ -103,7 +104,7 @@ function Page() {
                 <CardContent className="space-y-4">
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">CPF</Label>
-                    <p className="text-foreground">{data.cpf}</p>
+                    <p className="text-foreground">{maskCPF(data.cpf)}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Data de Nascimento</Label>
