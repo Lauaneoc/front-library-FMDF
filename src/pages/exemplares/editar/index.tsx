@@ -64,6 +64,7 @@ function Page() {
                 {...register("isbn_livro")}
                 className="bg-input border-border"
                 error={errors.isbn_livro?.message}
+                disabled
               />
             </div>
 

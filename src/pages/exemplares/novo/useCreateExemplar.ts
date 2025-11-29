@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { AxiosError } from "axios";
 import { useExemplares } from "../../../@shared/contexts/exemplares/useExemplares";
 import { useNavigate } from "react-router-dom";
 
@@ -39,6 +40,7 @@ export function useCreateExemplar() {
     formState: { errors },
     register,
     control,
+    setError,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: { estado: "Novo" },
@@ -62,7 +64,15 @@ export function useCreateExemplar() {
 
       navigate("/exemplares");
     } catch (err: unknown) {
-      console.error(err);
+      const axiosErr = err as AxiosError<{ errors: Record<string, string[]> }>;
+
+      const fieldErrors = axiosErr.response?.data?.errors;
+
+      if (fieldErrors) {
+        Object.entries(fieldErrors).forEach(([field, message]) =>
+          setError(field, { message: String(message) })
+        );
+      }
     } finally {
       setLoading(false);
     }
