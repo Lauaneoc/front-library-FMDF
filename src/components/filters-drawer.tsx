@@ -71,7 +71,7 @@ export function FiltersDrawer({ filters, onFiltersChange }: FiltersDrawerProps) 
             </Button>
           </SheetTrigger>
           <SheetContent
-            className="bg-white text-foreground border-l border-border shadow-lg px-4"
+            className="bg-[rgb(var(--background))] text-foreground border-l border-border shadow-lg px-4"
           >
             <SheetHeader>
               <SheetTitle>Filtros</SheetTitle>

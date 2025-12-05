@@ -3,7 +3,9 @@ import LoginPage from "./pages/auth/login";
 import { DefaultLayout } from "./components/default-layout";
 import DashboardPage from "./pages/dashboard";
 import TurmasPage from "./pages/turmas";
-import NovaTurmaPage from "./pages/turmas/nova";
+import NovaTurmaPage from "./pages/turmas/new";
+import VerTurmaPage from "./pages/turmas/view";
+import EditarTurmaPage from "./pages/turmas/update";
 import RelatoriosPage from "./pages/relatorios";
 import LocacoesPage from "./pages/locacoes";
 import LocacaoDetalhesPage from "./pages/locacoes/id";
@@ -39,9 +41,10 @@ export function RoutesPage() {
           <Route path="alunos/:matricula" element={<AlunoDetalhePage />} />
           <Route path="alunos/:matricula/editar" element={<EditAlunoPage />} />
 
-          {/* Turmas */}
           <Route path="turmas" element={<TurmasPage />} />
           <Route path="turmas/nova" element={<NovaTurmaPage />} />
+          <Route path="turmas/:id" element={<VerTurmaPage />} />
+          <Route path="turmas/:id/editar" element={<EditarTurmaPage />} />
 
           {/* Livros */}
           <Route path="livros" element={<LivrosPage />} />
