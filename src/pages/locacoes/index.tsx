@@ -68,9 +68,11 @@ function InnerLocacoesPage() {
           <BookOpen className="h-4 w-4" />
         </Button>
       )}
-      <Button variant="ghost" size="sm">
-        <Edit className="h-4 w-4" />
-      </Button>
+      <Link to={`/locacoes/${row.id}/editar`}>
+        <Button variant="ghost" size="sm">
+          <Edit className="h-4 w-4" />
+        </Button>
+      </Link>
     </div>
   )
 
