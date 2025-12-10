@@ -8,7 +8,7 @@ import { Link, useParams } from "react-router-dom"
 import { StudentProvider } from "../../../@shared/contexts/student/StudentProvider"
 import { TurmasProvider } from "../../../@shared/contexts/turmas/TurmasProvider"
 import { useViewStudent } from "./useViewStudent"
-import { maskCPF } from "../../../utils/masks"
+import { maskCPF, maskTurmaId } from "../../../utils/masks"
 
 const mockRentals = [
   {
@@ -118,7 +118,7 @@ function Page() {
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Turma</Label>
-                    <p className="text-foreground">{data.id_turma}</p>
+                    <p className="text-foreground">{maskTurmaId(data.id_turma)}</p>
                   </div>
                 </CardContent>
               </Card>

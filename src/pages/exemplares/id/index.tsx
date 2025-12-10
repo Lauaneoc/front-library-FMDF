@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui
 import { Label } from "../../../components/ui/label"
 import { useViewExemplarId } from "./useViewExemplar"
 import { ExemplaresProvider } from "../../../@shared/contexts/exemplares/ExemplaresProvider"
+import { maskExemplarId } from "../../../utils/masks"
 
 function Page() {
   const { id } = useParams<{ id: string }>();
@@ -32,7 +33,7 @@ function Page() {
               </Link>
               <div className="flex-1">
                 <h2 className="text-3xl font-bold text-foreground">Exemplar de {data.nome_livro}</h2>
-                <p className="text-muted-foreground">ID: {data.id}</p>
+                <p className="text-muted-foreground">ID: {maskExemplarId(data.id)}</p>
               </div>
               <Link to={`/exemplares/${data.id}/editar`}>
                 <Button>

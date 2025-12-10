@@ -9,6 +9,7 @@ import { EstadoBadge } from "../../../components/estado-badge";
 import { Textarea } from "../../../components/ui/textarea";
 import { useViewLocacao } from "../view/useViewLocacao";
 import { LocacoesProvider } from "../../../@shared/contexts/locacoes/LocacoesProvider";
+import { maskExemplarId, maskLocacaoId } from "../../../utils/masks";
 
 function Page() {
   const { id } = useParams<{ id: string }>();
@@ -40,7 +41,7 @@ function Page() {
 
           <div className="flex-1">
             <h2 className="text-3xl font-bold text-foreground">
-              Locação #{rental.id}
+              Locação #{maskLocacaoId(rental.id)}
             </h2>
             <div className="flex items-center gap-2 mt-1">
               <StatusBadge status={rental.status as any} />
@@ -103,7 +104,7 @@ function Page() {
             <CardContent className="space-y-4">
               <div>
                 <Label>ID do Exemplar</Label>
-                <p>{rental.id_exemplar || rental.exemplar || "N/A"}</p>
+                <p>{maskExemplarId(rental.id_exemplar) || "N/A"}</p>
               </div>
               <div>
                 <Label>Título</Label>

@@ -23,9 +23,14 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
 } from "../../components/ui/alert-dialog";
+import { maskExemplarId } from "../../utils/masks";
 
 const columns = [
-  { key: "id", label: "ID" },
+  {
+    key: "id",
+    label: "ID",
+    render: (value: string) => maskExemplarId(value),
+  },
   { key: "livro", label: "Livro" },
   {
     key: "estado",

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui
 import { Label } from "../../../components/ui/label"
 import { useViewTurma } from "./useViewTurmas"
 import { TurmasProvider } from "../../../@shared/contexts/turmas/TurmasProvider"
+import { maskTurmaId } from "../../../utils/masks"
 
 function Page() {
   const { id } = useParams<{ id: string }>()
@@ -36,7 +37,7 @@ function Page() {
               <h2 className="text-3xl font-bold">
                 {data.curso} - {data.serie}
               </h2>
-              <p className="text-muted-foreground">ID: {data.id}</p>
+              <p className="text-muted-foreground">ID: {maskTurmaId(data.id)}</p>
             </div>
 
             <Link to={`/turmas/${data.id}/editar`}>

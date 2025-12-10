@@ -19,9 +19,10 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
 } from "../../components/ui/alert-dialog"
+import { maskTurmaId } from "../../utils/masks"
 
 const columns = [
-  { key: "id", label: "ID" },
+  { key: "id", label: "ID", render: (value: string) => maskTurmaId(value) },
   { key: "curso", label: "Curso" },
   { key: "serie", label: "Série" },
   { key: "ano_letivo", label: "Ano Letivo", className: "text-center" },
