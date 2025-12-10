@@ -1,9 +1,21 @@
-import { ArrowLeft, Edit, BookOpen, User, Calendar, FileText } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import {
+  ArrowLeft,
+  Edit,
+  BookOpen,
+  User,
+  Calendar,
+  FileText,
+} from "lucide-react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
 import { StatusBadge } from "../../../components/status-badge";
 import { Badge } from "../../../components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../../components/ui/card";
 import { Label } from "../../../components/ui/label";
 import { EstadoBadge } from "../../../components/estado-badge";
 import { Textarea } from "../../../components/ui/textarea";
@@ -12,6 +24,8 @@ import { LocacoesProvider } from "../../../@shared/contexts/locacoes/LocacoesPro
 import { maskExemplarId, maskLocacaoId } from "../../../utils/masks";
 
 function Page() {
+  const navigate = useNavigate();
+
   const { id } = useParams<{ id: string }>();
   const { data: rental, isLoadingLocacao } = useViewLocacao(id ?? "");
 
@@ -32,12 +46,10 @@ function Page() {
     <main className="flex-1 overflow-y-auto p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center gap-4">
-          <Link to="/locacoes">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
-            </Button>
-          </Link>
+          <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar
+          </Button>
 
           <div className="flex-1">
             <h2 className="text-3xl font-bold text-foreground">
@@ -116,7 +128,7 @@ function Page() {
               </div>
               <div>
                 <Label>Estado</Label>
-                <EstadoBadge estado={rental.exemplar?.estado as any} />
+                <EstadoBadge estado={rental.estado_exemplar} />
               </div>
             </CardContent>
           </Card>
