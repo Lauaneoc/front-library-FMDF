@@ -20,7 +20,7 @@ import {
   AlertDialogCancel,
 } from "../../components/ui/alert-dialog"
 import { useState } from "react"
-import { maskCPF } from "../../utils/masks"
+import { maskCPF, maskTurmaId } from "../../utils/masks"
 
 const columns = [
   { key: "matricula", label: "Matrícula" },
@@ -31,7 +31,12 @@ const columns = [
     label: "Nascimento",
     render: (value: string) => new Date(value).toLocaleDateString("pt-BR"),
   },
-  { key: "id_turma", label: "ID da Turma", className: "text-center" },
+  {
+    key: "id_turma",
+    label: "ID da Turma",
+    className: "text-center",
+    render: (value: string) => maskTurmaId(value),
+  },
 ];
 
 const filters = [

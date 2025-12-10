@@ -105,8 +105,13 @@ function Page() {
                     <p className="text-foreground">{new Date(data.data_nascimento).toLocaleDateString("pt-br")}</p>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Turma</Label>
-                    <p className="text-foreground">{maskTurmaId(data.id_turma)}</p>
+                    <Label className="text-sm font-medium text-muted-foreground">
+                      Turma
+                    </Label>
+                    <p className="text-foreground">
+                      [{maskTurmaId(data.id_turma)}] {data.serie_turma} -{" "}
+                      {data.curso_turma} ({data.ano_letivo_turma})
+                    </p>
                   </div>
                 </CardContent>
               </Card>
