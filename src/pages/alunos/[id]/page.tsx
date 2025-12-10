@@ -4,7 +4,7 @@ import { Button } from "../../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
 import { Label } from "../../../components/ui/label"
 import { TableSimple } from "../../../components/table-simple"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { StudentProvider } from "../../../@shared/contexts/student/StudentProvider"
 import { TurmasProvider } from "../../../@shared/contexts/turmas/TurmasProvider"
 import { useViewStudent } from "./useViewStudent"
@@ -77,10 +77,12 @@ function Page() {
       <main className="flex-1 overflow-y-auto p-6">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center gap-4">
+            <Link to="/alunos">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Voltar
               </Button>
+            </Link>
             <div className="flex-1">
               {/* <h2 className="text-3xl font-bold text-foreground">{data.nome}</h2> */}
               <p className="text-muted-foreground">Matrícula: {data.matricula}</p>
