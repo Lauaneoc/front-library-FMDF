@@ -1,14 +1,17 @@
-import { RoutesPage } from "./route"
-import { Toaster } from "./components/ui/toaster"
+import { RoutesPage } from "./route";
+import { Toaster } from "sonner";
 
 function App() {
-
   return (
     <>
       <RoutesPage />
-      <Toaster />
+      <Toaster
+        position="bottom-left"
+        toastOptions={{ duration: 4000 }}
+        richColors
+      />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

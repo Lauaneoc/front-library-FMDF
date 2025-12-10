@@ -1,8 +1,8 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, ReactNode } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from 'sonner';
 import type { LivroInterface } from "../../interfaces/livroInterface";
 import { livroService } from "../../services/livroService";
-import { toast } from "../../../hooks/use-toast";
 
 interface LivrosContextData {
   livros: LivroInterface[] | null;
@@ -39,19 +39,11 @@ export function LivrosProvider({ children }: { children: ReactNode }) {
       value: LivroInterface
     ) => livroService.create(value),
     onSuccess: () => {
-      toast({
-        title: "Sucesso",
-        description: "Livro cadastrado com sucesso!",
-        variant: "default"
-      })
+      toast.success("Sucesso", {description: "Livro cadastrado com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["livros"] })
     },
     onError: () => {
-      toast({
-          title: "Erro",
-          description: "Erro ao cadastrar livro!",
-          variant: "destructive"
-      })
+      toast.error("Erro", {description: "Ocorreu uma falha ao cadastrar livro!"});
     },
   })
 
@@ -60,19 +52,11 @@ export function LivrosProvider({ children }: { children: ReactNode }) {
       value: LivroInterface
     ) => livroService.update(value.isbn, value),
     onSuccess: () => {
-      toast({
-        title: "Sucesso",
-        description: "Livro atualizado com sucesso!",
-        variant: "default"
-      })
+      toast.success("Sucesso", {description: "Livro atualizado com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["livros"] })
     },
     onError: () => {
-      toast({
-          title: "Erro",
-          description: "Erro ao atualizar livro!",
-          variant: "destructive"
-      })
+      toast.error("Erro", {description: "Ocorreu uma falha ao atualizar livro!"});
     },
   })
 
@@ -81,19 +65,11 @@ export function LivrosProvider({ children }: { children: ReactNode }) {
       value: string
     ) => livroService.remove(value),
     onSuccess: () => {
-      toast({
-        title: "Sucesso",
-        description: "Livro deletado com sucesso!",
-        variant: "default"
-      })
+      toast.success("Sucesso", {description: "Livro deletado com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["livros"] })
     },
     onError: () => {
-      toast({
-          title: "Erro",
-          description: "Erro ao deletar livro!",
-          variant: "destructive"
-      })
+      toast.error("Erro ao deletar livro", {description: "Não foi possível excluir o livro."});
     },
   })
 

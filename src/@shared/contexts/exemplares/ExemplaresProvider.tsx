@@ -1,8 +1,8 @@
 import { createContext, ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import type { ExemplarInterface } from "../../interfaces/exemplarInterface";
 import { exemplarService } from "../../services/exemplarService";
-import { toast } from "../../../hooks/use-toast";
 
 interface ExemplaresContextData {
   exemplares: ExemplarInterface[] | null;
@@ -40,59 +40,36 @@ export function ExemplaresProvider({ children }: { children: ReactNode }) {
     useMutation({
       mutationFn: (value: ExemplarInterface) => exemplarService.create(value),
       onSuccess: () => {
-        toast({
-          title: "Sucesso",
-          description: "Exemplar cadastrado com sucesso!",
-          variant: "default",
-        });
+        toast.success("Sucesso", {description: "Exemplar cadastrado com sucesso!"});
         queryClient.invalidateQueries({ queryKey: ["exemplares"] });
       },
       onError: () => {
-        toast({
-          title: "Erro",
-          description: "Erro ao cadastrar exemplar!",
-          variant: "destructive",
-        });
+        toast.error("Erro", {description: "Ocorreu uma falha ao cadastrar exemplar!"});
       },
     });
 
-  const {mutateAsync: updateOneExemplar, isPending: isPendingUpdateExemplar} = useMutation({
-    mutationFn: (value: ExemplarInterface) =>
-      exemplarService.update(value.id, value),
-    onSuccess: () => {
-      toast({
-        title: "Sucesso",
-        description: "Exemplar atualizado com sucesso!",
-        variant: "default",
-      });
-      queryClient.invalidateQueries({ queryKey: ["exemplares"] });
-    },
-    onError: () => {
-      toast({
-        title: "Erro",
-        description: "Erro ao atualizar exemplar!",
-        variant: "destructive",
-      });
-    },
-  });
+  const { mutateAsync: updateOneExemplar, isPending: isPendingUpdateExemplar } =
+    useMutation({
+      mutationFn: (value: ExemplarInterface) =>
+        exemplarService.update(value.id, value),
+      onSuccess: () => {
+        toast.success("Sucesso", {description: "Exemplar atualizado com sucesso!"});
+        queryClient.invalidateQueries({ queryKey: ["exemplares"] });
+      },
+      onError: () => {
+        toast.error("Erro", {description: "Ocorreu uma falha ao atualizar exemplar!"});
+      },
+    });
 
   const { mutateAsync: deleteOneExemplar, isPending: isPendingDeleteExemplar } =
     useMutation({
       mutationFn: (value: number) => exemplarService.remove(value),
       onSuccess: () => {
-        toast({
-          title: "Sucesso",
-          description: "Exemplar deletado com sucesso!",
-          variant: "default",
-        });
+        toast.success("Sucesso", {description: "Exemplar deletado com sucesso!"});
         queryClient.invalidateQueries({ queryKey: ["exemplares"] });
       },
       onError: () => {
-        toast({
-          title: "Erro",
-          description: "Erro ao deletar exemplar!",
-          variant: "destructive",
-        });
+        toast.error("Erro ao deletar exemplar", {description: "Não foi possível excluir o exemplar."});
       },
     });
 

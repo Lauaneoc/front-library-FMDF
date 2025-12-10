@@ -1,8 +1,8 @@
 import { createContext, ReactNode } from "react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { toast } from 'sonner'
 import type { TurmaCreateDTO, TurmaInterface } from "../../interfaces/turmaInterface"
 import { turmaService } from "../../services/turmaService"
-import { toast } from "../../../hooks/use-toast"
 
 interface TurmasContextData {
   turmas: TurmaInterface[] | null
@@ -36,33 +36,33 @@ export function TurmasProvider({ children }: { children: ReactNode }) {
   const { mutateAsync: createOneTurma, isPending: isPendingCreateTurma } = useMutation({
     mutationFn: (value: TurmaCreateDTO) => turmaService.create(value),
     onSuccess: () => {
-      toast({ title: "Sucesso", description: "Turma criada com sucesso!" })
+      toast.success("Sucesso", {description: "Turma criada com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["turmas"] })
     },
     onError: () => {
-      toast({ title: "Erro", description: "Erro ao criar turma", variant: "destructive" })
+      toast.error("Erro", {description: "Ocorreu uma falha ao criar turma!"});
     },
   })
 
   const updateOneTurma = useMutation({
     mutationFn: (value: TurmaInterface) => turmaService.update(value.id, value),
     onSuccess: () => {
-      toast({ title: "Sucesso", description: "Turma atualizada!" })
+      toast.success("Sucesso", {description: "Turma atualizada com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["turmas"] })
     },
     onError: () => {
-      toast({ title: "Erro", description: "Erro ao atualizar turma", variant: "destructive" })
+      toast.error("Erro", {description: "Ocorreu uma falha ao atualizar turma!"});
     },
   })
 
   const { mutateAsync: deleteOneTurma, isPending: isPendingDeleteTurma } = useMutation({
     mutationFn: (id: number) => turmaService.remove(id),
     onSuccess: () => {
-      toast({ title: "Sucesso", description: "Turma removida!" })
+      toast.success("Sucesso", {description: "Turma deletada com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["turmas"] })
     },
     onError: () => {
-      toast({ title: "Erro", description: "Erro ao deletar turma", variant: "destructive" })
+      toast.error("Erro ao deletar turma", {description: "Não foi possível excluir a turma."});
     },
   })
 

@@ -1,8 +1,8 @@
 import { createContext, ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from 'sonner';
 import type { StudentInterface } from "../../interfaces/studentInterface";
 import { studentService } from "../../services/studentService";
-import { toast } from "../../../hooks/use-toast";
 
 interface StudentContextData {
   students: StudentInterface[];
@@ -39,19 +39,11 @@ export function StudentProvider({ children }: { children: ReactNode }) {
       value: StudentInterface
     ) => studentService.create(value),
     onSuccess: () => {
-      toast({
-        title: "Sucesso",
-        description: "Aluno cadastrado com sucesso!",
-        variant: "default"
-      })
+      toast.success("Sucesso", {description: "Aluno cadastrado com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["alunos"] })
     },
     onError: () => {
-      toast({
-          title: "Erro",
-          description: "Erro ao cadastrar aluno!",
-          variant: "destructive"
-      })
+      toast.error("Erro", {description: "Ocorreu uma falha ao cadastrar aluno!"});
     },
   })
 
@@ -60,19 +52,11 @@ export function StudentProvider({ children }: { children: ReactNode }) {
       value: StudentInterface
     ) => studentService.update(value.matricula, value),
     onSuccess: () => {
-      toast({
-        title: "Sucesso",
-        description: "Aluno atualizado com sucesso!",
-        variant: "default"
-      })
+      toast.success("Sucesso", {description: "Aluno atualizado com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["alunos"] })
     },
     onError: () => {
-      toast({
-          title: "Erro",
-          description: "Erro ao atualizar aluno!",
-          variant: "destructive"
-      })
+      toast.error("Erro", {description: "Ocorreu uma falha ao atualizar aluno!"});
     },
   })
 
@@ -81,19 +65,11 @@ export function StudentProvider({ children }: { children: ReactNode }) {
       value: string
     ) => studentService.remove(value),
     onSuccess: () => {
-      toast({
-        title: "Sucesso",
-        description: "Aluno deletado com sucesso!",
-        variant: "default"
-      })
+      toast.success("Sucesso", {description: "Aluno deletado com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["alunos"] })
     },
     onError: () => {
-      toast({
-          title: "Erro",
-          description: "Erro ao deletar aluno!",
-          variant: "destructive"
-      })
+      toast.error("Erro ao deletar aluno", {description: "Não foi possível excluir o aluno."});
     },
   })
 

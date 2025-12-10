@@ -1,12 +1,12 @@
 import { createContext, ReactNode } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from 'sonner';
+import type { ExemplarInterface } from "../../interfaces/exemplarInterface";
 import type Locacao from "../../interfaces/locacaoInterface";
 import type { StudentInterface } from "../../interfaces/studentInterface";
-import type { ExemplarInterface } from "../../interfaces/exemplarInterface";
+import { exemplarService } from "../../services/exemplarService";
 import { locacaoService } from "../../services/locacaoService";
 import { studentService } from "../../services/studentService";
-import { exemplarService } from "../../services/exemplarService";
-import { toast } from "../../../hooks/use-toast";
 
 interface LocacoesContextData {
   locacoes: Locacao[] | null;
@@ -67,19 +67,11 @@ export function LocacoesProvider({ children }: { children: ReactNode }) {
   const { mutateAsync: createLocacao } = useMutation({
     mutationFn: (data: Partial<Locacao>) => locacaoService.create(data),
     onSuccess: () => {
-      toast({
-        title: "Sucesso",
-        description: "Locação criada com sucesso!",
-        variant: "default",
-      });
+      toast.success("Sucesso", {description: "Locação criada com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["locacoes"] })
     },
     onError: () => {
-      toast({
-        title: "Erro",
-        description: "Erro ao criar locação!",
-        variant: "destructive",
-      });
+      toast.error("Erro", {description: "Ocorreu uma falha ao criar locação!"});
     },
   });
 
@@ -89,11 +81,7 @@ export function LocacoesProvider({ children }: { children: ReactNode }) {
       locacaoService.update(String(id), data),
 
     onSuccess: (updatedLocacao) => {
-      toast({
-        title: "Sucesso",
-        description: "Locação atualizada com sucesso!",
-        variant: "default",
-      });
+      toast.success("Sucesso", {description: "Locação atualizada com sucesso!"});
 
       queryClient.setQueryData<Locacao[]>(["locacoes"], (old) =>
         old
@@ -105,11 +93,7 @@ export function LocacoesProvider({ children }: { children: ReactNode }) {
     },
 
     onError: () => {
-      toast({
-        title: "Erro",
-        description: "Erro ao atualizar locação!",
-        variant: "destructive",
-      });
+      toast.error("Erro", {description: "Ocorreu uma falha ao atualizar locação!"});
     },
   });
 
@@ -118,11 +102,7 @@ export function LocacoesProvider({ children }: { children: ReactNode }) {
     mutationFn: (id: number) => locacaoService.remove(id),
 
     onSuccess: (_, id) => {
-      toast({
-        title: "Sucesso",
-        description: "Locação deletada com sucesso!",
-        variant: "default",
-      });
+      toast.success("Sucesso", {description: "Locação deletada com sucesso!"});
 
       queryClient.setQueryData<Locacao[]>(["locacoes"], (old) =>
         old ? old.filter((l) => l.id !== id) : []
@@ -130,11 +110,7 @@ export function LocacoesProvider({ children }: { children: ReactNode }) {
     },
 
     onError: () => {
-      toast({
-        title: "Erro",
-        description: "Erro ao deletar locação!",
-        variant: "destructive",
-      });
+      toast.error("Erro ao deletar locação", {description: "Não foi possível excluir a locação."});
     },
   });
 
