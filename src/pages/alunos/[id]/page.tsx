@@ -8,50 +8,36 @@ import { Link, useParams } from "react-router-dom"
 import { StudentProvider } from "../../../@shared/contexts/student/StudentProvider"
 import { TurmasProvider } from "../../../@shared/contexts/turmas/TurmasProvider"
 import { useViewStudent } from "./useViewStudent"
-import { maskCPF, maskTurmaId } from "../../../utils/masks"
-
-const mockRentals = [
-  {
-    id: "LOC001",
-    livro: "Matemática - Volume 1",
-    exemplar: "EX001",
-    status: "Aberto",
-    retirada: "15/01/2024",
-    prevista: "29/01/2024",
-    devolucao: "-",
-  },
-  {
-    id: "LOC002",
-    livro: "História do Brasil",
-    exemplar: "EX045",
-    status: "Finalizado",
-    retirada: "02/01/2024",
-    prevista: "16/01/2024",
-    devolucao: "14/01/2024",
-  },
-  {
-    id: "LOC003",
-    livro: "Física Moderna",
-    exemplar: "EX123",
-    status: "Finalizado",
-    retirada: "20/12/2023",
-    prevista: "03/01/2024",
-    devolucao: "28/12/2023",
-  },
-]
+import { maskCPF, maskExemplarId, maskLocacaoId, maskTurmaId } from "../../../utils/masks"
 
 const rentalColumns = [
-  { key: "id", label: "ID" },
-  { key: "livro", label: "Livro" },
-  { key: "exemplar", label: "Exemplar" },
+  { key: "id", label: "ID", render: (value: string) => maskLocacaoId(value) },
+  { key: "nome_livro", label: "Livro" },
+  {
+    key: "id_exemplar",
+    label: "Exemplar",
+    render: (value: string) => maskExemplarId(value),
+  },
   {
     key: "status",
     label: "Status",
     render: (value: string) => <StatusBadge status={value as any} />,
   },
-  { key: "retirada", label: "Retirada" },
-  { key: "prevista", label: "Prev. Devolução" },
-  { key: "devolucao", label: "Devolução" },
+  {
+    key: "data_emprestimo",
+    label: "Retirada",
+    render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
+  },
+  {
+    key: "data_prevista",
+    label: "Prev. Devolução",
+    render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
+  },
+  {
+    key: "data_devolucao",
+    label: "Devolução",
+    render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
+  },
 ]
 
 function Page() {
@@ -60,9 +46,11 @@ function Page() {
 
   const renderRentalActions = (row: any) => (
     <div className="flex items-center gap-2">
+      <Link to={`/locacoes/${row.id}`}>
         <Button variant="ghost" size="sm">
           <BookOpen className="h-4 w-4" />
         </Button>
+      </Link>
     </div>
   )
 
@@ -156,7 +144,7 @@ function Page() {
                 <CardContent>
                   <TableSimple
                     columns={rentalColumns}
-                    data={mockRentals}
+                    data={data.locacoes}
                     actions={renderRentalActions}
                     pagination={{
                       currentPage: 1,
