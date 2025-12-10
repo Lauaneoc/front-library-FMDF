@@ -109,6 +109,10 @@ function Page() {
                     <p className="text-foreground">{maskCPF(data.cpf)}</p>
                   </div>
                   <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Nome Completo</Label>
+                    <p className="text-foreground">{data.nome}</p>
+                  </div>
+                  <div>
                     <Label className="text-sm font-medium text-muted-foreground">Data de Nascimento</Label>
                     <p className="text-foreground">{new Date(data.data_nascimento).toLocaleDateString("pt-br")}</p>
                   </div>
