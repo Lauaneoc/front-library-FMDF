@@ -66,16 +66,13 @@ export function LocacoesProvider({ children }: { children: ReactNode }) {
   // CREATE
   const { mutateAsync: createLocacao } = useMutation({
     mutationFn: (data: Partial<Locacao>) => locacaoService.create(data),
-    onSuccess: (newLocacao) => {
+    onSuccess: () => {
       toast({
         title: "Sucesso",
         description: "Locação criada com sucesso!",
         variant: "default",
       });
-
-      queryClient.setQueryData<Locacao[]>(["locacoes"], (old) =>
-        old ? [...old, newLocacao] : [newLocacao]
-      );
+      queryClient.invalidateQueries({ queryKey: ["locacoes"] })
     },
     onError: () => {
       toast({
