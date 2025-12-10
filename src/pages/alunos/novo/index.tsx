@@ -113,7 +113,7 @@ function Page() {
                       </Label>
 
                       <Select
-                        value={String(field.value)}
+                        value={field.value ? String(field.value) : undefined}
                         onValueChange={field.onChange}
                       >
                         <SelectTrigger className="bg-input border-border" id="serie">
