@@ -76,7 +76,7 @@ function Page() {
             <CardContent className="space-y-4">
               <div>
                 <Label>Nome</Label>
-                <p>{rental.aluno?.nome || rental.aluno || "N/A"}</p>
+                <p>{rental.nome_aluno || "N/A"}</p>
               </div>
               <div>
                 <Label>Matrícula</Label>
@@ -107,11 +107,11 @@ function Page() {
               </div>
               <div>
                 <Label>Título</Label>
-                <p>{rental.exemplar?.livro?.titulo || "N/A"}</p>
+                <p>{rental.nome_livro || "N/A"}</p>
               </div>
               <div>
                 <Label>ISBN</Label>
-                <p>{rental.exemplar?.livro?.isbn || "N/A"}</p>
+                <p>{rental.isbn_livro || "N/A"}</p>
               </div>
               <div>
                 <Label>Estado</Label>
