@@ -50,7 +50,7 @@ function Page() {
 
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Input label="Matrícula *" {...register("matricula")} id="matricula" className="bg-input border-border" error={errors.matricula?.message} />
+              <Input label="Matrícula *" disabled {...register("matricula")} id="matricula" className="bg-input border-border" error={errors.matricula?.message} />
             </div>
 
             <div className="space-y-2">
