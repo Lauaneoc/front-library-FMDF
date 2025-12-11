@@ -1,8 +1,12 @@
-import { useContext } from "react";
-import { TurmasContext } from "./TurmasProvider";
+import { useContext } from "react"
+import { TurmasContext } from "./TurmasProvider"
 
 export function useTurmas() {
-  const ctx = useContext(TurmasContext);
-  if (!ctx) throw new Error("useTurmas must be used inside TurmasProvider");
-  return ctx;
+  const context = useContext(TurmasContext)
+
+  if (!context) {
+    throw new Error("useTurmas deve ser usado dentro de um TurmasProvider")
+  }
+
+  return context
 }

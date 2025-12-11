@@ -8,7 +8,7 @@ import { queryClient } from "./@shared/api/queryClient"
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
         <App />
       </ThemeProvider>
     </QueryClientProvider>

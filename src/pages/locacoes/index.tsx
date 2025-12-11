@@ -11,11 +11,12 @@ import { FiltersDrawer } from "../../components/filters-drawer"
 import { TableSimple } from "../../components/table-simple"
 import { StatusBadge } from "../../components/status-badge"
 import { WizardDialog } from "../../components/wizard-dialog"
+import { maskLocacaoId } from "../../utils/masks"
 
 // (dados vindos da API via LocacoesProvider)
 
 const columns = [
-  { key: "id", label: "ID" },
+  { key: "id", label: "ID", render: (value: string) => maskLocacaoId(value) },
   { key: "aluno", label: "Aluno (Matrícula)" },
   { key: "exemplar", label: "Exemplar (ID + Livro)" },
   {
@@ -68,9 +69,11 @@ function InnerLocacoesPage() {
           <BookOpen className="h-4 w-4" />
         </Button>
       )}
-      <Button variant="ghost" size="sm">
-        <Edit className="h-4 w-4" />
-      </Button>
+      <Link to={`/locacoes/${row.id}/editar`}>
+        <Button variant="ghost" size="sm">
+          <Edit className="h-4 w-4" />
+        </Button>
+      </Link>
     </div>
   )
 

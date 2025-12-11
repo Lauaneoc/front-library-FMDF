@@ -4,53 +4,40 @@ import { Button } from "../../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
 import { Label } from "../../../components/ui/label"
 import { TableSimple } from "../../../components/table-simple"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { StudentProvider } from "../../../@shared/contexts/student/StudentProvider"
 import { TurmasProvider } from "../../../@shared/contexts/turmas/TurmasProvider"
 import { useViewStudent } from "./useViewStudent"
-
-const mockRentals = [
-  {
-    id: "LOC001",
-    livro: "Matemática - Volume 1",
-    exemplar: "EX001",
-    status: "Aberto",
-    retirada: "15/01/2024",
-    prevista: "29/01/2024",
-    devolucao: "-",
-  },
-  {
-    id: "LOC002",
-    livro: "História do Brasil",
-    exemplar: "EX045",
-    status: "Finalizado",
-    retirada: "02/01/2024",
-    prevista: "16/01/2024",
-    devolucao: "14/01/2024",
-  },
-  {
-    id: "LOC003",
-    livro: "Física Moderna",
-    exemplar: "EX123",
-    status: "Finalizado",
-    retirada: "20/12/2023",
-    prevista: "03/01/2024",
-    devolucao: "28/12/2023",
-  },
-]
+import { maskCPF, maskExemplarId, maskLocacaoId, maskTurmaId } from "../../../utils/masks"
 
 const rentalColumns = [
-  { key: "id", label: "ID" },
-  { key: "livro", label: "Livro" },
-  { key: "exemplar", label: "Exemplar" },
+  { key: "id", label: "ID", render: (value: string) => maskLocacaoId(value) },
+  { key: "nome_livro", label: "Livro" },
+  {
+    key: "id_exemplar",
+    label: "Exemplar",
+    render: (value: string) => maskExemplarId(value),
+  },
   {
     key: "status",
     label: "Status",
     render: (value: string) => <StatusBadge status={value as any} />,
   },
-  { key: "retirada", label: "Retirada" },
-  { key: "prevista", label: "Prev. Devolução" },
-  { key: "devolucao", label: "Devolução" },
+  {
+    key: "data_emprestimo",
+    label: "Retirada",
+    render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
+  },
+  {
+    key: "data_prevista",
+    label: "Prev. Devolução",
+    render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
+  },
+  {
+    key: "data_devolucao",
+    label: "Devolução",
+    render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
+  },
 ]
 
 function Page() {
@@ -59,9 +46,11 @@ function Page() {
 
   const renderRentalActions = (row: any) => (
     <div className="flex items-center gap-2">
+      <Link to={`/locacoes/${row.id}`}>
         <Button variant="ghost" size="sm">
           <BookOpen className="h-4 w-4" />
         </Button>
+      </Link>
     </div>
   )
 
@@ -76,10 +65,12 @@ function Page() {
       <main className="flex-1 overflow-y-auto p-6">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center gap-4">
+            <Link to="/alunos">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Voltar
               </Button>
+            </Link>
             <div className="flex-1">
               {/* <h2 className="text-3xl font-bold text-foreground">{data.nome}</h2> */}
               <p className="text-muted-foreground">Matrícula: {data.matricula}</p>
@@ -103,15 +94,24 @@ function Page() {
                 <CardContent className="space-y-4">
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">CPF</Label>
-                    <p className="text-foreground">{data.cpf}</p>
+                    <p className="text-foreground">{maskCPF(data.cpf)}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Nome Completo</Label>
+                    <p className="text-foreground">{data.nome}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Data de Nascimento</Label>
-                    <p className="text-foreground">{data.data_nascimento}</p>
+                    <p className="text-foreground">{new Date(data.data_nascimento).toLocaleDateString("pt-br")}</p>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Turma</Label>
-                    <p className="text-foreground">{data.id_turma}</p>
+                    <Label className="text-sm font-medium text-muted-foreground">
+                      Turma
+                    </Label>
+                    <p className="text-foreground">
+                      [{maskTurmaId(data.id_turma)}] {data.serie_turma} -{" "}
+                      {data.curso_turma} ({data.ano_letivo_turma})
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -149,10 +149,7 @@ function Page() {
                 <CardContent>
                   <TableSimple
                     columns={rentalColumns}
-                    data={mockRentals.map((rental) => ({
-                      ...rental,
-                      status: <StatusBadge status={rental.status as any} />,
-                    }))}
+                    data={data.locacoes}
                     actions={renderRentalActions}
                     pagination={{
                       currentPage: 1,

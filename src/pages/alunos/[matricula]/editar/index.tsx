@@ -22,7 +22,8 @@ function Page() {
     register, 
     control ,
     isPendingAllTurmas,
-    turmas
+    turmas,
+    errors,
   } = useUpdateMatricula(matricula ?? "")
 
   if (isLoadingMatricula) return <div>Carregando...</div>
@@ -49,19 +50,19 @@ function Page() {
 
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Input label="Matrícula *" {...register("matricula")} id="matricula" className="bg-input border-border" />
+              <Input label="Matrícula *" {...register("matricula")} id="matricula" className="bg-input border-border" error={errors.matricula?.message} />
             </div>
 
             <div className="space-y-2">
-              <Input label="CPF *" id="cpf" {...register("cpf")} maxLength={11} className="bg-input border-border" />
+              <Input label="CPF *" id="cpf" {...register("cpf")} maxLength={11} className="bg-input border-border" error={errors.cpf?.message} />
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <Input label="Nome Completo *" id="nome" {...register("nome")} className="bg-input border-border" />
+              <Input label="Nome Completo *" id="nome" {...register("nome")} className="bg-input border-border" error={errors.nome?.message} />
             </div>
 
             <div className="space-y-2">
-              <Input label="Data de Nascimento *" id="data_nascimento" type="date" {...register("data_nascimento")} className="bg-input border-border" />
+              <Input label="Data de Nascimento *" id="data_nascimento" type="date" {...register("data_nascimento")} className="bg-input border-border" error={errors.data_nascimento?.message} />
             </div>
 
             <div className="space-y-2">
@@ -77,8 +78,9 @@ function Page() {
                     </Label>
 
                     <Select
-                      value={field.value ?? ""}            // 👈 garante string
-                      onValueChange={field.onChange}       // 👈 atualiza o form
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      key={field.value ?? "empty-field"}
                     >
                       <SelectTrigger className="bg-input border-border" id="id_turma">
                         <SelectValue placeholder="Selecione uma turma" />

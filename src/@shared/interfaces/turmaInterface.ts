@@ -4,3 +4,5 @@ export interface TurmaInterface {
   serie: string;
   ano_letivo: number;
 }
+
+export type TurmaCreateDTO = Omit<TurmaInterface, "id">

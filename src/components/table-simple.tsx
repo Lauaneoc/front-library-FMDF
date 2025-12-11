@@ -7,9 +7,10 @@ import { Button } from "./ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface Column {
-  key: string
-  label: string
-  className?: string
+  key: string;
+  label: string;
+  className?: string;
+  render: (value: string) => string;
 }
 
 interface TableSimpleProps {
@@ -50,7 +51,9 @@ export function TableSimple({ columns, data, actions, pagination }: TableSimpleP
                 <TableRow key={index}>
                   {columns.map((column) => (
                     <TableCell key={column.key} className={column.className}>
-                      {row[column.key]}
+                      {column.render
+                        ? column.render(row[column.key])
+                        : row[column.key]}
                     </TableCell>
                   ))}
                   {actions && <TableCell>{actions(row)}</TableCell>}

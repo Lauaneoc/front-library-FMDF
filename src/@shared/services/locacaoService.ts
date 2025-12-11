@@ -8,7 +8,6 @@ const api = axios.create({
 export const locacaoService = {
   getAll: async () => {
     const { data } = await api.get("/locacoes/listar")
-    console.log({ data })
     return data
   },
 

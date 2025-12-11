@@ -8,10 +8,22 @@ export type Locacao = {
   data_devolucao?: string | null
   status?: string
   descricao?: string
-  // fields added by JOIN in listarLocacoes
-  aluno?: string
-  bibliotecario?: string
-  exemplar?: number
+
+  // FRONT-END ENRICHMENT
+  aluno?: {
+    nome: string
+    matricula: string
+    turma?: any
+  }
+
+  exemplar?: {
+    id: number
+    estado?: string
+    livro?: {
+      isbn?: string
+      titulo?: string
+    }
+  }
 }
 
 export default Locacao
