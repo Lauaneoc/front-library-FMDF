@@ -146,7 +146,7 @@ function InnerTurmasPage() {
       </div>
 
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white">
           <AlertDialogTitle>Remover Turma</AlertDialogTitle>
           <AlertDialogDescription>
             Esta ação é irreversível. Deseja continuar?
@@ -156,7 +156,7 @@ function InnerTurmasPage() {
             <AlertDialogAction
               onClick={handleConfirmDelete}
               disabled={isPendingDeleteTurma}
-              className="bg-destructive text-white"
+              className="bg-destructive"
             >
               {isPendingDeleteTurma ? "Removendo..." : "Remover"}
             </AlertDialogAction>

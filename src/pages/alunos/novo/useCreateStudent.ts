@@ -39,6 +39,7 @@ export function useCreateStudent() {
         formState: { errors },
         register,
         control,
+        setError
     } = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema)
     })
@@ -58,8 +59,19 @@ export function useCreateStudent() {
         await createOneStudent(payload);
         
         navigate("/alunos")
-        } catch (err: any) {
-            console.error(err)
+        } catch (error: any) {
+          console.log({ error });
+
+          const apiErrors = error.response?.data?.errors as Record<string, string[]>;
+
+          if (apiErrors && Object.keys(apiErrors).length > 0) {
+              Object.entries(apiErrors).forEach(([field, messages]) => {
+              setError(field as keyof typeof errors, {
+                  type: "manual",
+                  message: messages[0],
+              });
+              });
+          }
         }
     })
 

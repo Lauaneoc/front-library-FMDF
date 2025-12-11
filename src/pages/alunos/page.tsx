@@ -41,27 +41,6 @@ const columns = [
 
 const filters = [
   { key: "nome", label: "Nome", type: "text" as const },
-  {
-    key: "turma",
-    label: "Turma",
-    type: "select" as const,
-    options: [
-      { value: "1ano", label: "1º Ano" },
-      { value: "2ano", label: "2º Ano" },
-      { value: "3ano", label: "3º Ano" },
-      { value: "4ano", label: "4º Ano" },
-    ],
-  },
-  {
-    key: "status",
-    label: "Status",
-    type: "select" as const,
-    options: [
-      { value: "ativo", label: "Ativo" },
-      { value: "inativo", label: "Inativo" },
-      { value: "com_atraso", label: "Com Atraso" },
-    ],
-  },
 ]
 
 function Page() {
