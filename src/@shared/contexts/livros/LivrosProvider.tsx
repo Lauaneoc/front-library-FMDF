@@ -41,6 +41,7 @@ export function LivrosProvider({ children }: { children: ReactNode }) {
     onSuccess: () => {
       toast.success("Sucesso", {description: "Livro cadastrado com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["livros"] })
+      queryClient.invalidateQueries({ queryKey: ["dashboard-resumo"] })
     },
     onError: () => {
       toast.error("Erro", {description: "Ocorreu uma falha ao cadastrar livro!"});

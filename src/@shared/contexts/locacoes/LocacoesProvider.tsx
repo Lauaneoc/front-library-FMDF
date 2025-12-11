@@ -69,6 +69,7 @@ export function LocacoesProvider({ children }: { children: ReactNode }) {
     onSuccess: () => {
       toast.success("Sucesso", {description: "Locação criada com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["locacoes"] })
+      queryClient.invalidateQueries({ queryKey: ["dashboard-resumo"] })
     },
     onError: () => {
       toast.error("Erro", {description: "Ocorreu uma falha ao criar locação!"});

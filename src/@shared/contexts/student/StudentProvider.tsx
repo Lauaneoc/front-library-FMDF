@@ -41,6 +41,7 @@ export function StudentProvider({ children }: { children: ReactNode }) {
     onSuccess: () => {
       toast.success("Sucesso", {description: "Aluno cadastrado com sucesso!"});
       queryClient.invalidateQueries({ queryKey: ["alunos"] })
+      queryClient.invalidateQueries({ queryKey: ["dashboard-resumo"] })
     },
     onError: () => {
       toast.error("Erro", {description: "Ocorreu uma falha ao cadastrar aluno!"});
