@@ -42,6 +42,7 @@ export function useUpdateExemplar(id: string) {
     formState: { errors },
     register,
     control,
+    setError,
     reset,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -75,8 +76,19 @@ export function useUpdateExemplar(id: string) {
       await updateOneExemplar(payload);
 
       navigate("/exemplares");
-    } catch (err: unknown) {
-      console.error(err);
+    } catch (error: any) {
+      console.log({ error });
+
+      const apiErrors = error.response?.data?.errors as Record<string, string[]>;
+
+      if (apiErrors && Object.keys(apiErrors).length > 0) {
+          Object.entries(apiErrors).forEach(([field, messages]) => {
+          setError(field as keyof typeof errors, {
+              type: "manual",
+              message: messages[0],
+          });
+          });
+      }
     } finally {
       setLoading(false);
     }

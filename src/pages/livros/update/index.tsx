@@ -18,6 +18,7 @@ function Page() {
     register, 
     control, 
     loading, 
+    errors,
     navigate
   } = useUpdateBook(isbn ?? "")
 
@@ -45,6 +46,7 @@ function Page() {
               <Input 
                 label="ISBN *" 
                 id="isbn" 
+                error={errors.isbn?.message}
                 {...register("isbn")} 
                 className="bg-input border-border" 
               />
@@ -54,6 +56,7 @@ function Page() {
               <Input 
                 label="Nome do Livro *" 
                 id="nome"
+                error={errors.nome?.message}
                 {...register("nome")}
                 className="bg-input border-border" 
               />
@@ -63,6 +66,7 @@ function Page() {
               <Input 
                 label="Autor *" 
                 id="autor" 
+                error={errors.autor?.message}
                 {...register("autor")}
                 className="bg-input border-border" 
               />
@@ -72,6 +76,7 @@ function Page() {
               <Input 
                 label="Editora *" 
                 id="editora" 
+                error={errors.editora?.message}
                 {...register("editora")}
                 className="bg-input border-border" />
             </div>
@@ -80,6 +85,7 @@ function Page() {
               <Input 
                 label="Disciplina *" 
                 id="disciplina" 
+                error={errors.disciplina?.message}
                 {...register("disciplina")}
                 className="bg-input border-border" 
               />
@@ -112,8 +118,8 @@ function Page() {
                       </SelectContent>
                     </Select>
 
-                    {fieldState.error && (
-                      <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                    {errors.serie?.message && (
+                      <p className="text-xs text-destructive">{errors.serie?.message}</p>
                     )}
                   </div>
                 )}
@@ -124,6 +130,7 @@ function Page() {
               <Input 
                 label="Ano de Publicação *" 
                 id="anoPublicacao" 
+                error={errors.ano_publicacao?.message}
                 type="number" 
                 {...register("ano_publicacao")}
                 className="bg-input border-border" 
@@ -134,6 +141,7 @@ function Page() {
               <Input 
                 label="Edição" 
                 id="edicao" 
+                error={errors.edicao?.message}
                 {...register("edicao")}
                 className="bg-input border-border" 
               />

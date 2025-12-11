@@ -11,7 +11,7 @@ import { LivrosProvider } from "../../../@shared/contexts/livros/LivrosProvider"
 import { Controller } from "react-hook-form"
 
 function Page() {
-  const { onSubmit, register, control, isPendingCreateBook} = useCreateBook()
+  const { onSubmit, register, control, isPendingCreateBook, errors } = useCreateBook()
   const navigate = useNavigate()
 
   return (
@@ -41,6 +41,7 @@ function Page() {
                   id="isbn"
                   placeholder="978-85-16-07234-5"
                   label="ISBN *"
+                  error={errors.isbn?.message}
                   {...register("isbn")}
                   className="bg-input border-border"
                 />
@@ -52,6 +53,7 @@ function Page() {
                   id="nome"
                   placeholder="Matemática - Volume 1"
                   label="Nome do Livro *"
+                  error={errors.nome?.message}
                   {...register("nome")}
                   className="bg-input border-border"
                 />
@@ -63,6 +65,7 @@ function Page() {
                   id="autor"
                   placeholder="João Silva"
                   label="Autor *"
+                  error={errors.autor?.message}
                   {...register("autor")}
                   className="bg-input border-border"
                 />
@@ -74,6 +77,7 @@ function Page() {
                   id="editora"
                   placeholder="Editora ABC"
                   label="Editora *"
+                  error={errors.editora?.message}
                   {...register("editora")}
                   className="bg-input border-border"
                 />
@@ -86,6 +90,7 @@ function Page() {
                   placeholder="Matemática"
                   label="Disciplina"
                   {...register("disciplina")}
+                  error={errors.disciplina?.message}
                   className="bg-input border-border"
                 />
               </div>
@@ -96,7 +101,7 @@ function Page() {
                   name="serie"
                   control={control}
                   rules={{ required: "Série é obrigatória" }}
-                  render={({ field, fieldState }) => (
+                  render={({ field }) => (
                     <div className="space-y-2">
                       <Label htmlFor="serie" className="text-foreground font-medium">
                         Série *
@@ -117,8 +122,8 @@ function Page() {
                         </SelectContent>
                       </Select>
 
-                      {fieldState.error && (
-                        <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                      {errors.serie?.message && (
+                        <p className="text-xs text-destructive">{errors.serie?.message}</p>
                       )}
                     </div>
                   )}
@@ -130,6 +135,7 @@ function Page() {
                 <Input
                   id="ano_publicacao"
                   placeholder="2024"
+                  error={errors.ano_publicacao?.message}
                   label="Ano de Publicação *"
                   type="number"
                   {...register("ano_publicacao")}
@@ -144,6 +150,7 @@ function Page() {
                 <Input
                   id="edicao"
                   placeholder="1ª Edição"
+                  error={errors.edicao?.message}
                    label="Edição"
                   {...register("edicao")}
                   className="bg-input border-border"

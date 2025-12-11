@@ -87,8 +87,8 @@ function Page() {
                       </SelectContent>
                     </Select>
 
-                    {fieldState.error && (
-                      <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                    {errors.status && (
+                      <p className="text-xs text-destructive">{errors.status.message}</p>
                     )}
                   </div>
                 )}
@@ -99,6 +99,7 @@ function Page() {
               <Input 
                 label="Data de Devolução"
                 id="data_devolucao"
+                error={errors.data_devolucao?.message}
                 type="date" 
                 {...register("data_devolucao")}
               />

@@ -35,7 +35,8 @@ export function useCreateBook() {
         handleSubmit,
         formState: { errors },
         register,
-        control
+        control,
+        setError
     } = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema)
     })
@@ -59,15 +60,28 @@ export function useCreateBook() {
             edicao: data.edicao || null,
         }
 
-        await createOneBook.mutateAsync(payload);
+        await createOneBook(payload);
         
             navigate("/livros")
-        } catch (err: any) {
-            console.error(err)
+        }  catch (error: any) {
+            console.log({ error });
+
+            const apiErrors = error.response?.data?.errors as Record<string, string[]>;
+
+            if (apiErrors && Object.keys(apiErrors).length > 0) {
+                Object.entries(apiErrors).forEach(([field, messages]) => {
+                setError(field as keyof typeof errors, {
+                    type: "manual",
+                    message: messages[0],
+                });
+                });
+            }
         } finally {
             setLoading(false)
         }
     })
+
+    console.log({errors})
 
     return {
         onSubmit,

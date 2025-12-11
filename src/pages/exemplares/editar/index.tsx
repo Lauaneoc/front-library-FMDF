@@ -102,9 +102,9 @@ function Page() {
                       </SelectContent>
                     </Select>
 
-                    {fieldState.error && (
+                    {errors.estado?.message && (
                       <p className="text-xs text-destructive">
-                        {fieldState.error.message}
+                        {errors.estado?.message}
                       </p>
                     )}
                   </div>

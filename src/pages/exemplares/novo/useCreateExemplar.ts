@@ -63,16 +63,19 @@ export function useCreateExemplar() {
       await createOneExemplar(payload);
 
       navigate("/exemplares");
-    } catch (err: unknown) {
-      const axiosErr = err as AxiosError<{ errors: Record<string, string[]> }>;
+    } catch (error: any) {
+        console.log({ error });
 
-      const fieldErrors = axiosErr.response?.data?.errors;
+        const apiErrors = error.response?.data?.errors as Record<string, string[]>;
 
-      if (fieldErrors) {
-        Object.entries(fieldErrors).forEach(([field, message]) =>
-          setError(field, { message: String(message) })
-        );
-      }
+        if (apiErrors && Object.keys(apiErrors).length > 0) {
+            Object.entries(apiErrors).forEach(([field, messages]) => {
+            setError(field as keyof typeof errors, {
+                type: "manual",
+                message: messages[0],
+            });
+            });
+        }
     } finally {
       setLoading(false);
     }
