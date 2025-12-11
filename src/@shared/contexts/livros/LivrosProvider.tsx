@@ -61,18 +61,34 @@ export function LivrosProvider({ children }: { children: ReactNode }) {
     },
   })
 
-  const {mutateAsync: deleteOneBook, isPending: isPendingDeleteBook} = useMutation({
-    mutationFn: (
-      value: string
-    ) => livroService.remove(value),
+  const { mutateAsync: deleteOneBook, isPending: isPendingDeleteBook } = useMutation({
+    mutationFn: (isbn: string) => livroService.remove(isbn),
     onSuccess: () => {
-      toast.success("Sucesso", {description: "Livro deletado com sucesso!"});
-      queryClient.invalidateQueries({ queryKey: ["livros"] })
+      toast.success("Sucesso", { description: "Livro deletado com sucesso!" });
+      queryClient.invalidateQueries({ queryKey: ["livros"] });
     },
-    onError: () => {
-      toast.error("Erro ao deletar livro", {description: "Não foi possível excluir o livro."});
+    onError: (error: any) => {
+      console.log({ error });
+
+      const apiErrors = error?.response?.data?.errors;
+      const apiMessage = error?.response?.data?.message;
+
+      if (apiErrors) {
+        Object.entries(apiErrors).forEach(([field, messages]: any) => {
+          toast.error("Erro ao deletar livro", {
+            description: messages[0],
+          });
+        });
+      } else if (apiMessage) {
+        toast.error("Erro ao deletar livro", { description: apiMessage });
+      } else {
+        toast.error("Erro ao deletar livro", {
+          description: "Não foi possível excluir o livro.",
+        });
+      }
     },
-  })
+  });
+
 
   return (
     <LivrosContext.Provider

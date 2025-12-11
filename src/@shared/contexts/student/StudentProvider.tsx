@@ -61,18 +61,33 @@ export function StudentProvider({ children }: { children: ReactNode }) {
     },
   })
 
-  const {mutateAsync: deleteOneStudent, isPending: isPendingDeleteStudent} = useMutation({
-    mutationFn: (
-      value: string
-    ) => studentService.remove(value),
+  const { mutateAsync: deleteOneStudent, isPending: isPendingDeleteStudent } = useMutation({
+    mutationFn: (value: string) => studentService.remove(value),
     onSuccess: () => {
-      toast.success("Sucesso", {description: "Aluno deletado com sucesso!"});
-      queryClient.invalidateQueries({ queryKey: ["alunos"] })
+      toast.success("Sucesso", { description: "Aluno deletado com sucesso!" });
+      queryClient.invalidateQueries({ queryKey: ["alunos"] });
     },
-    onError: () => {
-      toast.error("Erro ao deletar aluno", {description: "Não foi possível excluir o aluno."});
+    onError: (error: any) => {
+      console.log({ error });
+
+      const dbErrors = error?.response?.data?.errors?.database;
+      const apiMessage = error?.response?.data?.message;
+
+      if (dbErrors?.includes("ER_ROW_IS_REFERENCED_2")) {
+        toast.error("Erro ao deletar aluno", {
+          description:
+            "Não foi possível excluir o aluno porque existem registros relacionados a ele.",
+        });
+      } else if (apiMessage) {
+        toast.error("Erro ao deletar aluno", { description: apiMessage });
+      } else {
+        toast.error("Erro ao deletar aluno", {
+          description: "Não foi possível excluir o aluno.",
+        });
+      }
     },
-  })
+  });
+
 
   return (
     <StudentContext.Provider

@@ -58,13 +58,27 @@ export function TurmasProvider({ children }: { children: ReactNode }) {
   const { mutateAsync: deleteOneTurma, isPending: isPendingDeleteTurma } = useMutation({
     mutationFn: (id: number) => turmaService.remove(id),
     onSuccess: () => {
-      toast.success("Sucesso", {description: "Turma deletada com sucesso!"});
-      queryClient.invalidateQueries({ queryKey: ["turmas"] })
+      toast.success("Sucesso", { description: "Turma deletada com sucesso!" });
+      queryClient.invalidateQueries({ queryKey: ["turmas"] });
     },
-    onError: () => {
-      toast.error("Erro ao deletar turma", {description: "Não foi possível excluir a turma."});
+    onError: (error: any) => {
+      console.log({ error });
+
+      const dbErrors = error?.response?.data?.errors?.database;
+
+      if (dbErrors?.includes("ER_ROW_IS_REFERENCED_2")) {
+        toast.error("Erro ao deletar turma", {
+          description:
+            "Não foi possível excluir a turma porque existem registros relacionados a ela.",
+        });
+      } else {
+        toast.error("Erro ao deletar turma", {
+          description: error?.response?.data?.message || "Não foi possível excluir a turma.",
+        });
+      }
     },
-  })
+  });
+
 
   return (
     <TurmasContext.Provider

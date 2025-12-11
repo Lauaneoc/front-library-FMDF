@@ -61,17 +61,33 @@ export function ExemplaresProvider({ children }: { children: ReactNode }) {
       },
     });
 
-  const { mutateAsync: deleteOneExemplar, isPending: isPendingDeleteExemplar } =
-    useMutation({
-      mutationFn: (value: number) => exemplarService.remove(value),
-      onSuccess: () => {
-        toast.success("Sucesso", {description: "Exemplar deletado com sucesso!"});
-        queryClient.invalidateQueries({ queryKey: ["exemplares"] });
-      },
-      onError: () => {
-        toast.error("Erro ao deletar exemplar", {description: "Não foi possível excluir o exemplar."});
-      },
-    });
+    const { mutateAsync: deleteOneExemplar, isPending: isPendingDeleteExemplar } =
+      useMutation({
+        mutationFn: (id: number) => exemplarService.remove(id),
+        onSuccess: () => {
+          toast.success("Sucesso", { description: "Exemplar deletado com sucesso!" });
+          queryClient.invalidateQueries({ queryKey: ["exemplares"] });
+        },
+        onError: (error: any) => {
+          console.log({ error });
+
+          const dbErrors = error?.response?.data?.errors?.database;
+          const apiMessage = error?.response?.data?.message;
+
+          if (dbErrors && dbErrors.includes("ER_ROW_IS_REFERENCED_2")) {
+            toast.error("Erro ao deletar exemplar", {
+              description: "Não é possível excluir este exemplar porque ele está vinculado a outros registros.",
+            });
+          } else if (apiMessage) {
+            toast.error("Erro ao deletar exemplar", { description: apiMessage });
+          } else {
+            toast.error("Erro ao deletar exemplar", {
+              description: "Não foi possível excluir o exemplar.",
+            });
+          }
+        },
+      });
+
 
   return (
     <ExemplaresContext.Provider
