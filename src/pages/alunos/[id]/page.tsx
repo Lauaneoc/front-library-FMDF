@@ -75,10 +75,12 @@ function Page() {
               {/* <h2 className="text-3xl font-bold text-foreground">{data.nome}</h2> */}
               <p className="text-muted-foreground">Matrícula: {data.matricula}</p>
             </div>
+            <Link to={`/alunos/${data.matricula}/editar`}>
               <Button>
                 <Edit className="h-4 w-4 mr-2" />
                 Editar
               </Button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
