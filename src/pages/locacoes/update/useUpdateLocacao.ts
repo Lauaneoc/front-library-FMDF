@@ -13,7 +13,7 @@ const schema = z.object({
     message: "Status inválido",
   }),
   data_devolucao: z.string().optional(),
-  descricao: z.string().min(1, "Descrição é obrigatória"),
+  descricao: z.string().optional(),
 })
 
 type FormData = z.infer<typeof schema>
@@ -82,7 +82,7 @@ export function useUpdateLocacao(id: string) {
     setLoading(true)
     try {
       const payload = {
-        status: formData.status,
+        status: formData.data_devolucao ? "Finalizado" : "Aberto",
         data_devolucao: formData.data_devolucao || null,
         descricao: formData.descricao
       }

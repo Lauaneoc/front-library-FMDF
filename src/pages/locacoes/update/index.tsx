@@ -62,38 +62,6 @@ function Page() {
               <p className="font-medium">Livro</p>
               <p className="text-muted-foreground">{displayData?.livroNome || 'N/A'}</p>
             </div>
-            
-            <div className="space-y-2">
-              <Controller
-                name="status"
-                control={control}
-                rules={{ required: "Status é obrigatório" }}
-                render={({ field, fieldState }) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status *</Label>
-
-                    <Select
-                      key={field.value}
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger id="status">
-                        <SelectValue placeholder="Selecione o status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="aberto">Aberto</SelectItem>
-                        <SelectItem value="finalizado">Finalizado</SelectItem>
-                        <SelectItem value="atrasado">Atrasado</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    {errors.status && (
-                      <p className="text-xs text-destructive">{errors.status.message}</p>
-                    )}
-                  </div>
-                )}
-              />
-            </div>
 
             <div className="space-y-2">
               <Input 
@@ -107,7 +75,7 @@ function Page() {
 
             {/* DESCRIÇÃO */}
             <div className="md:col-span-2 space-y-2">
-              <Label htmlFor="descricao">Descrição *</Label>
+              <Label htmlFor="descricao">Descrição</Label>
               <Textarea
                 id="descricao"
                 rows={4}

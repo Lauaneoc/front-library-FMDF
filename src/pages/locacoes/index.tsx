@@ -81,7 +81,14 @@ function InnerLocacoesPage() {
     id: l.id,
     aluno: l.aluno || l.matricula_aluno || "-",
     exemplar: l.exemplar ? `EX${l.exemplar.toString().padStart(3, "0")}` : String(l.id_exemplar || "-"),
-    status: <StatusBadge status={l.status as any} />,
+    status: <StatusBadge
+    status={
+      l.data_devolucao
+        ? "Finalizado" : new Date() > new Date(l.data_prevista)
+          ? "Em atraso"
+        : "Aberto"
+    }
+  />,
     retirada: l.data_emprestimo ? new Date(l.data_emprestimo).toLocaleDateString() : "-",
     prevista: l.data_prevista ? new Date(l.data_prevista).toLocaleDateString() : "-",
     devolucao: l.data_devolucao ? new Date(l.data_devolucao).toLocaleDateString() : "-",

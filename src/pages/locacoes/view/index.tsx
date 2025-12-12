@@ -57,17 +57,11 @@ function Page() {
             </h2>
             <div className="flex items-center gap-2 mt-1">
               <StatusBadge status={rental.status as any} />
-              {isOverdue && <Badge variant="destructive">Em Atraso</Badge>}
+              {isOverdue && <StatusBadge status="Em atraso" />}
             </div>
           </div>
 
           <div className="flex gap-2">
-            {rental.status === "Aberto" && (
-              <Button>
-                <BookOpen className="h-4 w-4 mr-2" />
-                Finalizar Locação
-              </Button>
-            )}
             <Link to={`/locacoes/${rental.id}/editar`}>
               <Button variant="outline">
                 <Edit className="h-4 w-4 mr-2" />
