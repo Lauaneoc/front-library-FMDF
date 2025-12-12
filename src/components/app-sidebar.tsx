@@ -24,7 +24,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
       <div className="flex h-16 items-center px-6 border-b border-border">
         <div className="flex items-center gap-2">
           <Library className="h-8 w-8 text-primary" />
-          <span className="text-xl font-semibold text-foreground">Biblioteca Escolar</span>
+          <span className="text-xl font-semibold text-foreground">SGLD</span>
         </div>
       </div>
 
